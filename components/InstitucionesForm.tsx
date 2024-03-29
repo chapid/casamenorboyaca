@@ -60,8 +60,8 @@ export default function InstitucionesForm() {
             },
           });                
           resetStateValues();          
-        } catch (err) {
-          const messages = err.errors.map((e) => e.message).join("\n");
+        } catch (err: any) {
+          const messages = err.errors.map((e: any) => e.message).join("\n");
           console.error(messages);               
         }
       }}
