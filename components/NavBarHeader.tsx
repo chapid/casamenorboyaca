@@ -1,9 +1,10 @@
+/* eslint-disable */
 import { Authenticator } from '@aws-amplify/ui-react';
 import React from "react";
 import {Navbar, NavbarBrand, NavbarContent, NavbarItem, Link, Button} from "@nextui-org/react";
 
 export const NavBarHeader = () => {
-  return <Navbar variant="floating">
+  return <Navbar shouldHideOnScroll>
   <NavbarBrand>
     <p className="font-bold text-inherit">Capacitaciones casa del menor Boyac&aacute;</p>
   </NavbarBrand>

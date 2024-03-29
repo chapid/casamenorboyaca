@@ -5,7 +5,7 @@ import React from "react";
 
 import {Tabs, Tab, Card, CardBody, CardHeader} from "@nextui-org/react";
 
-function Page({user, signOut}) {
+function Page({user, signOut}: {user: any, signOut: any}) {
     const [selected, setSelected] = React.useState("municipios");
     return (
         <div className="flex w-full flex-col">
@@ -17,7 +17,7 @@ function Page({user, signOut}) {
         <Tabs 
           aria-label="Options"         
           selectedKey={selected}
-          onSelectionChange={setSelected}
+          onSelectionChange={(e) => setSelected}
         >
           <Tab key="municipios" title="Municipios">
             <Card>
