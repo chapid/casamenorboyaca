@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { generateClient } from 'aws-amplify/data';
 import type { Schema } from '@/amplify/data/resource';
-import { withAuthenticator } from '@aws-amplify/ui-react';
 
 const client = generateClient<Schema>({
   authMode: 'iam',
@@ -10,7 +9,7 @@ const client = generateClient<Schema>({
 //const client = generateClient<Schema>();
 
 function Page() {
-  const [municipios, setMunicipios] = useState<Schema['Municipio'][]>([]);
+  const [municipios, setMunicipios] = useState<Schema['Municipio'][]>(new Array());
 
   async function listMunicipios() {
     const { data } = await client.models.Municipio.list();

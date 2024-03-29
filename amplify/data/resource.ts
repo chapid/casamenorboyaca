@@ -20,7 +20,7 @@ const schema = a.schema({
       nombreMunicipio: a.string()!,
       instituciones: a.hasMany('Institucion'),
     })
-    .authorization([a.allow.owner(), a.allow.public('iam').to(['read'])]),
+    .authorization([a.allow.private().to(['read', 'update', 'create', 'delete']), a.allow.public('iam').to(['read'])]),
   Asistente: a
     .model({
       nombre: a.string()!,
