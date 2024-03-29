@@ -1,3 +1,4 @@
+/* eslint-disable */
 import * as React from "react";
 import { Button, Flex, Grid, TextField, Autocomplete } from "@aws-amplify/ui-react";
 import { generateClient } from "aws-amplify/api";
@@ -67,7 +68,8 @@ export default function InstitucionesForm() {
       
     >
       <Autocomplete
-        label="Municipio"      
+        label="Municipio"    
+        placeholder="Seleccione un municipio"  
         options={municipioOptions}
         onChange={(e) => {        
           setMunicipio(e.target.value);
@@ -81,10 +83,7 @@ export default function InstitucionesForm() {
         onChange={(e) => {
           let { value } = e.target;          
           setNombreInstitucion(value);
-        }}
-        errorMessage={errors.nombreInstitucion?.errorMessage}
-        hasError={errors.nombreInstitucion?.hasError}
-        
+        }}              
       ></TextField>
       <Flex
         justifyContent="space-between"        
@@ -105,8 +104,7 @@ export default function InstitucionesForm() {
           <Button
             children="Submit"
             type="submit"
-            variation="primary"
-            isDisabled={Object.values(errors).some((e) => e?.hasError)}          
+            variation="primary"                 
           ></Button>
         </Flex>
       </Flex>
