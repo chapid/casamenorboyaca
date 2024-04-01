@@ -26,7 +26,6 @@ export const NavBarHeader = () => {
     </NavbarItem>
   </NavbarContent>
   <NavbarContent justify="end">
-  <p>Navbar</p> 
   <Authenticator>
     {({ user, signOut }) => (
 

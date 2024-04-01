@@ -74,7 +74,6 @@ export const getInstitucion = /* GraphQL */ `
         createdAt
         id
         nombreMunicipio
-        owner
         updatedAt
         __typename
       }
@@ -96,7 +95,6 @@ export const getMunicipio = /* GraphQL */ `
         __typename
       }
       nombreMunicipio
-      owner
       updatedAt
       __typename
     }
@@ -199,7 +197,6 @@ export const listMunicipios = /* GraphQL */ `
         createdAt
         id
         nombreMunicipio
-        owner
         updatedAt
         __typename
       }

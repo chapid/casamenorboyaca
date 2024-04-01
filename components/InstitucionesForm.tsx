@@ -13,13 +13,11 @@ export default function InstitucionesForm() {
   const [nombreInstitucion, setNombreInstitucion] = React.useState("");
   const [errors, setErrors] = React.useState({});
   const [municipioOptions, setMunicipioOptions] = React.useState(new Array());
-  const [municipios, setMunicipios] = useState<Schema['Municipio'][]>([]);
+  
 
   async function listMunicipios() {
-    const { data } = await client.models.Municipio.list();  
-    setMunicipios(data);
-    let municipioOptions = data.map((municipio) => ({id: municipio.id, label: municipio.nombreMunicipio}));
-    console.log(municipioOptions);
+    const { data } = await client.models.Municipio.list();    
+    let municipioOptions = data.map((municipio) => ({id: municipio.id, label: municipio.nombreMunicipio}));  
     setMunicipioOptions(municipioOptions);
   }
 
@@ -30,10 +28,7 @@ export default function InstitucionesForm() {
   const resetStateValues = () => {
     setNombreInstitucion("");
     setErrors({});
-  };
-  const validations = {
-    nombreInstitucion: [],
-  };
+  };  
   
   return (
     <Grid
@@ -42,12 +37,9 @@ export default function InstitucionesForm() {
       columnGap="15px"
       padding="20px"
       onSubmit={async (event) => {
-        event.preventDefault();
-        let modelFields = {
-          nombreInstitucion,
-        };
+        event.preventDefault();      
         
-        if (nombreInstitucion === "" && validations.nombreInstitucion.length > 0) {
+        if (nombreInstitucion === "" || municipio === "") {
           return;
         }
         try {          
@@ -55,8 +47,9 @@ export default function InstitucionesForm() {
             query: createInstitucion.replaceAll("__typename", ""),
             variables: {
               input: {
-                ...modelFields,
-              },
+                nombreInstitucion: nombreInstitucion,
+                municipioInstitucionesId: municipio,
+              }            
             },
           });                
           resetStateValues();          
@@ -71,10 +64,10 @@ export default function InstitucionesForm() {
         label="Municipio"    
         placeholder="Seleccione un municipio"  
         options={municipioOptions}
-        onChange={(e) => {        
-          setMunicipio(e.target.value);
-        }}        
-        />
+        onSelect={(e) => {        
+          setMunicipio(e.id);
+        }}      
+      />
       <TextField
         label="Nombre institucion"
         isRequired={false}

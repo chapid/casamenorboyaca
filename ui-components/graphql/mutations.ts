@@ -83,7 +83,6 @@ export const createInstitucion = /* GraphQL */ `
         createdAt
         id
         nombreMunicipio
-        owner
         updatedAt
         __typename
       }
@@ -108,7 +107,6 @@ export const createMunicipio = /* GraphQL */ `
         __typename
       }
       nombreMunicipio
-      owner
       updatedAt
       __typename
     }
@@ -216,7 +214,6 @@ export const deleteInstitucion = /* GraphQL */ `
         createdAt
         id
         nombreMunicipio
-        owner
         updatedAt
         __typename
       }
@@ -241,7 +238,6 @@ export const deleteMunicipio = /* GraphQL */ `
         __typename
       }
       nombreMunicipio
-      owner
       updatedAt
       __typename
     }
@@ -349,7 +345,6 @@ export const updateInstitucion = /* GraphQL */ `
         createdAt
         id
         nombreMunicipio
-        owner
         updatedAt
         __typename
       }
@@ -374,7 +369,6 @@ export const updateMunicipio = /* GraphQL */ `
         __typename
       }
       nombreMunicipio
-      owner
       updatedAt
       __typename
     }

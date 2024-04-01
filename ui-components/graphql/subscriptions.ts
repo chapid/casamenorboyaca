@@ -82,7 +82,6 @@ export const onCreateInstitucion = /* GraphQL */ `
         createdAt
         id
         nombreMunicipio
-        owner
         updatedAt
         __typename
       }
@@ -97,9 +96,8 @@ export const onCreateInstitucion = /* GraphQL */ `
 export const onCreateMunicipio = /* GraphQL */ `
   subscription OnCreateMunicipio(
     $filter: ModelSubscriptionMunicipioFilterInput
-    $owner: String
   ) {
-    onCreateMunicipio(filter: $filter, owner: $owner) {
+    onCreateMunicipio(filter: $filter) {
       createdAt
       id
       instituciones {
@@ -107,7 +105,6 @@ export const onCreateMunicipio = /* GraphQL */ `
         __typename
       }
       nombreMunicipio
-      owner
       updatedAt
       __typename
     }
@@ -214,7 +211,6 @@ export const onDeleteInstitucion = /* GraphQL */ `
         createdAt
         id
         nombreMunicipio
-        owner
         updatedAt
         __typename
       }
@@ -229,9 +225,8 @@ export const onDeleteInstitucion = /* GraphQL */ `
 export const onDeleteMunicipio = /* GraphQL */ `
   subscription OnDeleteMunicipio(
     $filter: ModelSubscriptionMunicipioFilterInput
-    $owner: String
   ) {
-    onDeleteMunicipio(filter: $filter, owner: $owner) {
+    onDeleteMunicipio(filter: $filter) {
       createdAt
       id
       instituciones {
@@ -239,7 +234,6 @@ export const onDeleteMunicipio = /* GraphQL */ `
         __typename
       }
       nombreMunicipio
-      owner
       updatedAt
       __typename
     }
@@ -346,7 +340,6 @@ export const onUpdateInstitucion = /* GraphQL */ `
         createdAt
         id
         nombreMunicipio
-        owner
         updatedAt
         __typename
       }
@@ -361,9 +354,8 @@ export const onUpdateInstitucion = /* GraphQL */ `
 export const onUpdateMunicipio = /* GraphQL */ `
   subscription OnUpdateMunicipio(
     $filter: ModelSubscriptionMunicipioFilterInput
-    $owner: String
   ) {
-    onUpdateMunicipio(filter: $filter, owner: $owner) {
+    onUpdateMunicipio(filter: $filter) {
       createdAt
       id
       instituciones {
@@ -371,7 +363,6 @@ export const onUpdateMunicipio = /* GraphQL */ `
         __typename
       }
       nombreMunicipio
-      owner
       updatedAt
       __typename
     }
