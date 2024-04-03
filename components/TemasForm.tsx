@@ -11,11 +11,12 @@ const client = generateClient<Schema>();
 export default function TemasForm() {
   const [nombreTema, setNombreTema] = React.useState("");
   const [descripcion, setDescripcion] = React.useState("");
-  const [errors, setErrors] = React.useState({});    
-  const [files, setFiles] = React.useState([]);  
+  const [errors, setErrors] = React.useState({});       
   const hiddenInput = React.useRef(null);
   const acceptedFileTypes = ["application/pdf"];
-  const onFilePickerChange = (event) => {
+  const [files, setFiles] = React.useState<File[]>(new Array<File>());
+
+  const onFilePickerChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { files } = event.target;
     if (!files || files.length !== 1) {
       return;
@@ -30,9 +31,9 @@ export default function TemasForm() {
     setErrors({});
   };  
 
-  const uploadFiles = async (idTema) => {
-    try {
-      const result = uploadData({
+  const uploadFiles = async (idTema: string) => {
+    try {      
+      const result = await uploadData({
         key: `temas/${idTema}/${files[0].name}`,
         data: files[0],
         options: {        
@@ -123,7 +124,7 @@ export default function TemasForm() {
         </DropZone.Default>
         <Flex direction="column" alignItems="center">
           <Text>Arrastra el PDF del tema aquí o</Text>
-          <Button size="small" onClick={() => hiddenInput.current.click()}>
+          <Button size="small" onClick={() => {if (hiddenInput && hiddenInput.current) (hiddenInput.current as HTMLInputElement).click()}}>
             Buscar archivo
           </Button>
         </Flex>
