@@ -140,7 +140,7 @@ export default function MunicipioCreateForm(props) {
         {...getOverrideProps(overrides, "CTAFlex")}
       >
         <Button
-          children="Clear"
+          children="Limpiar"
           type="reset"
           onClick={(event) => {
             event.preventDefault();
@@ -153,7 +153,7 @@ export default function MunicipioCreateForm(props) {
           {...getOverrideProps(overrides, "RightAlignCTASubFlex")}
         >
           <Button
-            children="Submit"
+            children="Guardar"
             type="submit"
             variation="primary"
             isDisabled={Object.values(errors).some((e) => e?.hasError)}

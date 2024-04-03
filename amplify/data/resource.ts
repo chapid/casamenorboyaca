@@ -10,22 +10,22 @@ authenticated via an API key, can only "read" records.
 const schema = a.schema({
   Institucion: a
     .model({
-      nombreInstitucion: a.string()!,
+      nombreInstitucion: a.string().required(),
       municipio: a.belongsTo('Municipio'),
       asistentes: a.hasMany('Asistente'),
     })
     .authorization([a.allow.owner(), a.allow.public('iam').to(['read'])]),  
   Municipio: a
     .model({
-      nombreMunicipio: a.string()!,
+      nombreMunicipio: a.string().required(),
       instituciones: a.hasMany('Institucion'),
     })
     .authorization([a.allow.private().to(['read', 'update', 'create', 'delete']), a.allow.public('iam').to(['read'])]),
   Asistente: a
     .model({
-      nombre: a.string()!,
-      apellido: a.string()!,
-      correo: a.string()!,
+      nombre: a.string().required(),
+      apellido: a.string().required(),
+      correo: a.string().required(),
       telefono: a.string(),
       instituciones: a.belongsTo('Institucion'),
       capacitacione: a.belongsTo('Capacitacion'),
@@ -33,15 +33,15 @@ const schema = a.schema({
     .authorization([a.allow.public('iam').to(['create']), a.allow.private().to(['read', 'update', 'delete'])]), 
   Tema: a
     .model({
-      nombreTema: a.string()!,
-      descripcion: a.string()!,
+      nombreTema: a.string().required(),
+      descripcion: a.string().required(),
       capacitaciones: a.hasMany('Capacitacion'),
     })
     .authorization([a.allow.owner(), a.allow.public('iam').to(['read'])]),  
   Capacitacion: a
     .model({
-      descripcion: a.string()!,
-      fechaInicio: a.string()!,
+      descripcion: a.string().required(),
+      fechaInicio: a.string().required(),
       fechaFin: a.string(),
       temas: a.hasMany('Tema'),
       asistentes: a.hasMany('Asistente'),

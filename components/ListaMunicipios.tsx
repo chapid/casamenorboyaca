@@ -1,5 +1,5 @@
 import React from "react";
-import {Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, getKeyValue} from "@nextui-org/react";
+import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, getKeyValue, Spinner } from "@nextui-org/react";
 
 import { generateClient } from "aws-amplify/api";
 import { useState, useEffect } from 'react';
@@ -16,11 +16,7 @@ const columns = [
   {
     key: "createdAt",
     label: "FECHA DE CREACIÓN",
-  },
-  {
-    key: "acciones",
-    label: "ACCIONES",
-  },
+  }, 
 ];
 
 export default function ListaMunicipios() {
@@ -28,84 +24,71 @@ export default function ListaMunicipios() {
   const [pageTokens, setPageTokens] = React.useState(new Array<string>());
   const [currentPageIndex, setCurrentPageIndex] = React.useState(1);
   const [hasMorePages, setHasMorePages] = React.useState(true);
-
-  const handleNextPage = async () => {  
-    console.log('pageTokens',pageTokens);  
-    if (hasMorePages && currentPageIndex === pageTokens.length) {
-        const { data: municipio, nextToken } = await client.models.Municipio.list({
-            limit: 10,
-            nextToken: pageTokens[pageTokens.length - 1]
-          });
-        setMunicipios(municipio);
-      if (!nextToken) {
-        setHasMorePages(false);
-      }else{
-        setPageTokens([...pageTokens, nextToken]);
-      }
-    }
-
-    setCurrentPageIndex(currentPageIndex + 1);
-  };
+  const [loading, setLoading] = React.useState(true);
 
   const handlePageTurn = async (pageIndex: number) => {
-    console.log('pageIndex',pageIndex);
-    if (hasMorePages || pageIndex <= pageTokens.length){
+    if (hasMorePages || pageIndex <= pageTokens.length + 1) {
+      setLoading(true);
       const { data: municipio, nextToken } = await client.models.Municipio.list({
         limit: 10,
-        nextToken: pageIndex>1 ? pageTokens[pageIndex - 1]:null
+        nextToken: pageIndex > 1 ? pageTokens[pageIndex - 2] : null
       });
-    setMunicipios(municipio);
-    console.log('nextToken',nextToken);
-    
-    if (!nextToken) {
-      setHasMorePages(false);
-    } else {
-      
-      if (pageTokens.length < 1) {
-        console.log('pageTokens.length',pageTokens.length);
-        setPageTokens([...pageTokens, nextToken]);
+      setMunicipios(municipio);
+
+      if (!nextToken) {
+        setHasMorePages(false);
+      } else {
+
+        if (pageTokens.length < 1) {
+          setPageTokens([...pageTokens, nextToken]);
+        }
       }
       setCurrentPageIndex(pageIndex);
+      setLoading(false);
     }
-    console.log('pageTokens',pageTokens);
-    }
-    
-    
-    
   };
 
   useEffect(() => {
-    handlePageTurn(1);
+    const sub = client.models.Municipio.observeQuery().subscribe({
+      next: ({ items, isSynced }) => {
+        handlePageTurn(1);
+      },
+    });
+    return () => sub.unsubscribe();
+
   }, []);
-    
-    
-  
+
+
+
   return (
     <div className="w-full">
-        <p className="text-2xl text-center">Lista de municipios</p>
-    <Table aria-label="Tabla de instituciones">
-      <TableHeader columns={columns}>
-        {(column) => <TableColumn key={column.key}>{column.label}</TableColumn>}
-      </TableHeader>
-      <TableBody items={municipios}>
-        {(municipio) => (
-          <TableRow key={municipio.id}>
-            {(columnKey) => <TableCell>{getKeyValue(municipio, columnKey)}</TableCell>}
-          </TableRow>
-        )}
-      </TableBody>
-    </Table>
-    
-    
-    <Pagination
-      currentPage={currentPageIndex}
-      totalPages={pageTokens.length + 1}
-      hasMorePages={hasMorePages}
-      onNext={() => handlePageTurn(currentPageIndex + 1)}
-      onPrevious={() => handlePageTurn(currentPageIndex - 1)}
-      onChange={(pageIndex) => handlePageTurn(pageIndex || 1)}
-    />
+      <p className="text-2xl text-center">Lista de municipios</p>
+      {loading && <div className="w-full flex justify-center"><Spinner label="Cargando..." color="warning" /></div>}
+      <Table aria-label="Tabla de instituciones">
 
-  </div>
+        <TableHeader columns={columns}>
+          {(column) => <TableColumn key={column.key}>{column.label}</TableColumn>}
+        </TableHeader>
+        <TableBody items={municipios}>
+          {(municipio) => (
+            <TableRow key={municipio.id}>
+              {(columnKey) => <TableCell>{getKeyValue(municipio, columnKey)}</TableCell>}
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
+
+
+
+      <Pagination
+        currentPage={currentPageIndex}
+        totalPages={pageTokens.length + 1}
+        hasMorePages={hasMorePages}
+        onNext={() => handlePageTurn(currentPageIndex + 1)}
+        onPrevious={() => handlePageTurn(currentPageIndex - 1)}
+        onChange={(pageIndex) => handlePageTurn(pageIndex || 1)}
+      />
+
+    </div>
   );
 }

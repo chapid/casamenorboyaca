@@ -1,11 +1,13 @@
 import Head from "next/head";
-import React from "react";
+import React, { use, useEffect } from "react";
 import { Inter } from "next/font/google";
 import styles from "@/styles/Home.module.css";
+import { getCurrentUser } from 'aws-amplify/auth';
 
 const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
+  
   return (
     <>
       <Head>

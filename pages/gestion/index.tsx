@@ -1,7 +1,9 @@
-import {MunicipioCreateForm, TemaCreateForm} from "@/ui-components";
+import {MunicipioCreateForm} from "@/ui-components";
 import InstitucionesForm from "../../components/InstitucionesForm";
 import ListaInstituciones from "@/components/ListaInstituciones";
 import ListaMunicipios from "@/components/ListaMunicipios";
+import ListaTemas from "@/components/ListaTemas";
+import TemasForm from "@/components/TemasForm";
 import { withAuthenticator, Button } from '@aws-amplify/ui-react';
 import React from "react";
 
@@ -13,7 +15,7 @@ function Page({user, signOut}: {user: any, signOut: any}) {
         <div className="flex w-full flex-col">
         <Card>
           <CardHeader>
-            <h2>Gestión {user.username}</h2> <Button onClick={signOut}>Salir</Button>
+            <h2>Gestión de datos</h2>
           </CardHeader>
         </Card>
         <Tabs 
@@ -43,7 +45,9 @@ function Page({user, signOut}: {user: any, signOut: any}) {
           <Tab key="temas" title="Temas">
             <Card>
               <CardBody>
-                <TemaCreateForm />
+                <TemasForm />
+                <Divider className="my-4" />
+                <ListaTemas />
               </CardBody>
             </Card>  
           </Tab>
