@@ -1,0 +1,10 @@
+import { createContext, useContext } from 'react';
+export type InstitutionIdContextType = {institucionId: string, setInstitucionId: (id: string) => void};
+export const InstitutionIdContext = createContext<InstitutionIdContextType>({ institucionId: "", setInstitucionId: () => {} });
+export const useInstitutionIdContext = () => useContext(InstitutionIdContext);
+export type TemaIdContextType = {temaId: string, setTemaId: (id: string) => void};
+export const TemaIdContext = createContext<TemaIdContextType>({ temaId: "", setTemaId: () => {} });
+export const useTemaIdContext = () => useContext(TemaIdContext);
+export type CapacitacionIdContextType = {capacitacionId: string, setCapacitacionId: (id: string) => void};
+export const CapacitacionIdContext = createContext<CapacitacionIdContextType>({ capacitacionId: "", setCapacitacionId: () => {} });
+export const useCapacitacionIdContext = () => useContext(CapacitacionIdContext);

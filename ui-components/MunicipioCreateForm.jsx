@@ -29,7 +29,7 @@ export default function MunicipioCreateForm(props) {
     setErrors({});
   };
   const validations = {
-    nombreMunicipio: [],
+    nombreMunicipio: [{ type: "Required" }],
   };
   const runValidationTasks = async (
     fieldName,
@@ -113,7 +113,7 @@ export default function MunicipioCreateForm(props) {
     >
       <TextField
         label="Nombre municipio"
-        isRequired={false}
+        isRequired={true}
         isReadOnly={false}
         value={nombreMunicipio}
         onChange={(e) => {
@@ -140,7 +140,7 @@ export default function MunicipioCreateForm(props) {
         {...getOverrideProps(overrides, "CTAFlex")}
       >
         <Button
-          children="Limpiar"
+          children="Clear"
           type="reset"
           onClick={(event) => {
             event.preventDefault();
@@ -153,7 +153,7 @@ export default function MunicipioCreateForm(props) {
           {...getOverrideProps(overrides, "RightAlignCTASubFlex")}
         >
           <Button
-            children="Guardar"
+            children="Submit"
             type="submit"
             variation="primary"
             isDisabled={Object.values(errors).some((e) => e?.hasError)}

@@ -16,7 +16,7 @@ const columns = [
   {
     key: "createdAt",
     label: "FECHA DE CREACIÓN",
-  }, 
+  },
 ];
 
 export default function ListaMunicipios() {
@@ -63,20 +63,21 @@ export default function ListaMunicipios() {
   return (
     <div className="w-full">
       <p className="text-2xl text-center">Lista de municipios</p>
-      {loading && <div className="w-full flex justify-center"><Spinner label="Cargando..." color="warning" /></div>}
-      <Table aria-label="Tabla de instituciones">
+      {loading ?
+        <div className="w-full flex justify-center"><Spinner label="Cargando..." color="warning" /></div>
+        : <Table aria-label="Tabla de instituciones">
+          <TableHeader columns={columns}>
+            {(column) => <TableColumn key={column.key}>{column.label}</TableColumn>}
+          </TableHeader>
+          <TableBody items={municipios}>
+            {(municipio) => (
+              <TableRow key={municipio.id}>
+                {(columnKey) => <TableCell>{getKeyValue(municipio, columnKey)}</TableCell>}
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>}
 
-        <TableHeader columns={columns}>
-          {(column) => <TableColumn key={column.key}>{column.label}</TableColumn>}
-        </TableHeader>
-        <TableBody items={municipios}>
-          {(municipio) => (
-            <TableRow key={municipio.id}>
-              {(columnKey) => <TableCell>{getKeyValue(municipio, columnKey)}</TableCell>}
-            </TableRow>
-          )}
-        </TableBody>
-      </Table>
 
 
 

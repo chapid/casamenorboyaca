@@ -58,9 +58,9 @@ export default function AsistenteUpdateForm(props) {
   }, [idProp, asistenteModelProp]);
   React.useEffect(resetStateValues, [asistenteRecord]);
   const validations = {
-    nombre: [],
-    apellido: [],
-    correo: [],
+    nombre: [{ type: "Required" }],
+    apellido: [{ type: "Required" }],
+    correo: [{ type: "Required" }],
     telefono: [],
   };
   const runValidationTasks = async (
@@ -89,9 +89,9 @@ export default function AsistenteUpdateForm(props) {
       onSubmit={async (event) => {
         event.preventDefault();
         let modelFields = {
-          nombre: nombre ?? null,
-          apellido: apellido ?? null,
-          correo: correo ?? null,
+          nombre,
+          apellido,
+          correo,
           telefono: telefono ?? null,
         };
         const validationResponses = await Promise.all(
@@ -146,7 +146,7 @@ export default function AsistenteUpdateForm(props) {
     >
       <TextField
         label="Nombre"
-        isRequired={false}
+        isRequired={true}
         isReadOnly={false}
         value={nombre}
         onChange={(e) => {
@@ -173,7 +173,7 @@ export default function AsistenteUpdateForm(props) {
       ></TextField>
       <TextField
         label="Apellido"
-        isRequired={false}
+        isRequired={true}
         isReadOnly={false}
         value={apellido}
         onChange={(e) => {
@@ -200,7 +200,7 @@ export default function AsistenteUpdateForm(props) {
       ></TextField>
       <TextField
         label="Correo"
-        isRequired={false}
+        isRequired={true}
         isReadOnly={false}
         value={correo}
         onChange={(e) => {

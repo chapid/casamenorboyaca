@@ -60,8 +60,8 @@ export default function CapacitacionUpdateForm(props) {
   }, [idProp, capacitacionModelProp]);
   React.useEffect(resetStateValues, [capacitacionRecord]);
   const validations = {
-    descripcion: [],
-    fechaInicio: [],
+    descripcion: [{ type: "Required" }],
+    fechaInicio: [{ type: "Required" }],
     fechaFin: [],
   };
   const runValidationTasks = async (
@@ -90,8 +90,8 @@ export default function CapacitacionUpdateForm(props) {
       onSubmit={async (event) => {
         event.preventDefault();
         let modelFields = {
-          descripcion: descripcion ?? null,
-          fechaInicio: fechaInicio ?? null,
+          descripcion,
+          fechaInicio,
           fechaFin: fechaFin ?? null,
         };
         const validationResponses = await Promise.all(
@@ -146,7 +146,7 @@ export default function CapacitacionUpdateForm(props) {
     >
       <TextField
         label="Descripcion"
-        isRequired={false}
+        isRequired={true}
         isReadOnly={false}
         value={descripcion}
         onChange={(e) => {
@@ -172,7 +172,7 @@ export default function CapacitacionUpdateForm(props) {
       ></TextField>
       <TextField
         label="Fecha inicio"
-        isRequired={false}
+        isRequired={true}
         isReadOnly={false}
         value={fechaInicio}
         onChange={(e) => {

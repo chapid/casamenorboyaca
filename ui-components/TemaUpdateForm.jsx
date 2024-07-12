@@ -53,8 +53,8 @@ export default function TemaUpdateForm(props) {
   }, [idProp, temaModelProp]);
   React.useEffect(resetStateValues, [temaRecord]);
   const validations = {
-    nombreTema: [],
-    descripcion: [],
+    nombreTema: [{ type: "Required" }],
+    descripcion: [{ type: "Required" }],
   };
   const runValidationTasks = async (
     fieldName,
@@ -82,8 +82,8 @@ export default function TemaUpdateForm(props) {
       onSubmit={async (event) => {
         event.preventDefault();
         let modelFields = {
-          nombreTema: nombreTema ?? null,
-          descripcion: descripcion ?? null,
+          nombreTema,
+          descripcion,
         };
         const validationResponses = await Promise.all(
           Object.keys(validations).reduce((promises, fieldName) => {
@@ -137,7 +137,7 @@ export default function TemaUpdateForm(props) {
     >
       <TextField
         label="Nombre tema"
-        isRequired={false}
+        isRequired={true}
         isReadOnly={false}
         value={nombreTema}
         onChange={(e) => {
@@ -162,7 +162,7 @@ export default function TemaUpdateForm(props) {
       ></TextField>
       <TextField
         label="Descripcion"
-        isRequired={false}
+        isRequired={true}
         isReadOnly={false}
         value={descripcion}
         onChange={(e) => {

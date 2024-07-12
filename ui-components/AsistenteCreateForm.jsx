@@ -36,9 +36,9 @@ export default function AsistenteCreateForm(props) {
     setErrors({});
   };
   const validations = {
-    nombre: [],
-    apellido: [],
-    correo: [],
+    nombre: [{ type: "Required" }],
+    apellido: [{ type: "Required" }],
+    correo: [{ type: "Required" }],
     telefono: [],
   };
   const runValidationTasks = async (
@@ -126,7 +126,7 @@ export default function AsistenteCreateForm(props) {
     >
       <TextField
         label="Nombre"
-        isRequired={false}
+        isRequired={true}
         isReadOnly={false}
         value={nombre}
         onChange={(e) => {
@@ -153,7 +153,7 @@ export default function AsistenteCreateForm(props) {
       ></TextField>
       <TextField
         label="Apellido"
-        isRequired={false}
+        isRequired={true}
         isReadOnly={false}
         value={apellido}
         onChange={(e) => {
@@ -180,7 +180,7 @@ export default function AsistenteCreateForm(props) {
       ></TextField>
       <TextField
         label="Correo"
-        isRequired={false}
+        isRequired={true}
         isReadOnly={false}
         value={correo}
         onChange={(e) => {

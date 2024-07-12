@@ -51,7 +51,7 @@ export default function MunicipioUpdateForm(props) {
   }, [idProp, municipioModelProp]);
   React.useEffect(resetStateValues, [municipioRecord]);
   const validations = {
-    nombreMunicipio: [],
+    nombreMunicipio: [{ type: "Required" }],
   };
   const runValidationTasks = async (
     fieldName,
@@ -79,7 +79,7 @@ export default function MunicipioUpdateForm(props) {
       onSubmit={async (event) => {
         event.preventDefault();
         let modelFields = {
-          nombreMunicipio: nombreMunicipio ?? null,
+          nombreMunicipio,
         };
         const validationResponses = await Promise.all(
           Object.keys(validations).reduce((promises, fieldName) => {
@@ -133,7 +133,7 @@ export default function MunicipioUpdateForm(props) {
     >
       <TextField
         label="Nombre municipio"
-        isRequired={false}
+        isRequired={true}
         isReadOnly={false}
         value={nombreMunicipio}
         onChange={(e) => {

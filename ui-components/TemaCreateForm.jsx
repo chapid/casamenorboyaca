@@ -32,8 +32,8 @@ export default function TemaCreateForm(props) {
     setErrors({});
   };
   const validations = {
-    nombreTema: [],
-    descripcion: [],
+    nombreTema: [{ type: "Required" }],
+    descripcion: [{ type: "Required" }],
   };
   const runValidationTasks = async (
     fieldName,
@@ -118,7 +118,7 @@ export default function TemaCreateForm(props) {
     >
       <TextField
         label="Nombre tema"
-        isRequired={false}
+        isRequired={true}
         isReadOnly={false}
         value={nombreTema}
         onChange={(e) => {
@@ -143,7 +143,7 @@ export default function TemaCreateForm(props) {
       ></TextField>
       <TextField
         label="Descripcion"
-        isRequired={false}
+        isRequired={true}
         isReadOnly={false}
         value={descripcion}
         onChange={(e) => {

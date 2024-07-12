@@ -1,20 +1,26 @@
 /* eslint-disable */
-import * as React from "react";
+import { useState, useEffect, useRef } from "react";
 import { Button, Flex, Grid, TextField, DropZone, Text, TextAreaField, VisuallyHidden } from "@aws-amplify/ui-react";
+import { useTemaIdContext } from "./IdContext";
 import { generateClient } from "aws-amplify/api";
-import { uploadData } from 'aws-amplify/storage';
 import type { Schema } from '@/amplify/data/resource';
+import {Progress} from "@nextui-org/react";
 import { MdCheckCircle, MdFileUpload, MdRemoveCircle } from 'react-icons/md';
+import MessagesHandler from "./MessagesHandler";
 
 
 const client = generateClient<Schema>();
 export default function TemasForm() {
-  const [nombreTema, setNombreTema] = React.useState("");
-  const [descripcion, setDescripcion] = React.useState("");
-  const [errors, setErrors] = React.useState({});       
-  const hiddenInput = React.useRef(null);
+  const [nombreTema, setNombreTema] = useState("");
+  const [descripcion, setDescripcion] = useState("");
+  const [errors, setErrors] = useState({});
+  const [saveResultType, setSaveResultType] = useState("");
+  const [saveMessage, setSaveMessage] = useState("");   
+  const hiddenInput = useRef(null);
   const acceptedFileTypes = ["application/pdf"];
-  const [files, setFiles] = React.useState<File[]>(new Array<File>());
+  const [files, setFiles] = useState<File[]>(new Array<File>());
+  const [isUploading, setIsUploading] = useState(false);
+  const {temaId, setTemaId} = useTemaIdContext();
 
   const onFilePickerChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { files } = event.target;
@@ -24,34 +30,59 @@ export default function TemasForm() {
     setFiles(Array.from(files));
   };
 
+  useEffect(() => {
+    if (temaId !== "") loadTema();
+  }, [temaId]);
+
   const resetStateValues = () => {
-    setNombreTema("");
+    setTemaId("");
+    setNombreTema("");  
     setDescripcion("");
     setFiles([]);
-    setErrors({});
+    setErrors({});  
   };  
 
+  async function loadTema() {
+    const { data } = await client.models.Tema.get({ id: temaId }, { selectionSet: ['nombreTema', 'descripcion'] });
+    setNombreTema(data.nombreTema);
+    setDescripcion(data.descripcion);
+  }
+
   const uploadFiles = async (idTema: string) => {
-    try {      
-      const result = await uploadData({
-        key: `temas/${idTema}/${files[0].name}`,
-        data: files[0],
-        options: {        
-          onProgress: ({ transferredBytes, totalBytes }) => {
-            if (totalBytes) {
-              console.log(
-                `Upload progress ${
-                  Math.round((transferredBytes / totalBytes) * 100)
-                } %`
-              );
-            }
-          }
+    try {    
+      setIsUploading(true);  
+      const response = await fetch(
+        process.env.NEXT_PUBLIC_BASE_URL + '/api/upload',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ filename: `temas/${idTema}.pdf`, contentType: "application/pdf" }),
         }
-      }).result;
-      console.log('Key from Response: ', result.key);
+      )
+      if (response.ok) {
+        const { url } = await response.json()        
+        
+        const uploadResponse = await fetch(url, {
+          body: files[0],
+          method: "PUT",
+          headers: { "Content-Type": "application/pdf" }
+        })
+  
+        if (uploadResponse.ok) {
+          alert('Subida de presentación exitosa')
+        } else {
+          console.error('S3 Upload Error:', uploadResponse)
+          alert('Falló la carga de la presentación.')
+        }
+      } else {
+        alert('Falló la pre-carga de la presentación.')
+      }
     } catch (error) {
       console.log('Error : ', error);
     }
+    setIsUploading(false);
   }
   
   return (
@@ -61,23 +92,40 @@ export default function TemasForm() {
       columnGap="15px"
       padding="20px"
       onSubmit={async (event) => {
-        event.preventDefault();              
+        event.preventDefault(); 
+        setSaveResultType("");
+        setSaveMessage(""); 
+        if (temaId === "" && files.length === 0) {
+          alert("Debe subir un archivo PDF");
+          return;
+        }
         if (nombreTema === "" || descripcion === "") {
           return;
         }
-        try {          
-          const {data: tema} = await client.models.Tema.create({                        
-            nombreTema: nombreTema,  
-            descripcion: descripcion,                                  
-          });      
-          uploadFiles(tema.id);
-
-          
+        try {   
+          if (temaId !== "") {
+            await client.models.Tema.update({                        
+              id: temaId,
+              nombreTema: nombreTema.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase(),  
+              descripcion: descripcion,                                  
+            });
+            if (files.length > 0)          
+              uploadFiles(temaId);
+            setSaveMessage("Tema actualizado correctamente"); 
+          }else{
+            const {data: tema} = await client.models.Tema.create({                        
+              nombreTema: nombreTema.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase(),  
+              descripcion: descripcion,                                  
+            });      
+            uploadFiles(tema.id);
+            setSaveMessage("Tema creado correctamente");
+          }       
+          setSaveResultType("success");          
           resetStateValues();          
         } catch (err: any) {
           console.error(err);
-          const messages = err.errors.map((e: any) => e.message).join("\n");
-          console.error(messages);               
+          setSaveResultType("error");
+          setSaveMessage("Error al crear el tema");          
         }
       }}
       
@@ -100,6 +148,7 @@ export default function TemasForm() {
             setDescripcion(value);          
           }
         }
+        isRequired={true}
         value={descripcion}        
         rows={3}/>
       <DropZone
@@ -127,7 +176,16 @@ export default function TemasForm() {
           <Button size="small" onClick={() => {if (hiddenInput && hiddenInput.current) (hiddenInput.current as HTMLInputElement).click()}}>
             Buscar archivo
           </Button>
+          <Progress 
+          isIndeterminate={true}
+          aria-label="Subiendo..."
+          size="md"        
+          color="success"
+          showValueLabel={true}
+          className={`max-w-md ${isUploading ? '' : 'hidden'}`}
+        />
         </Flex>
+       
         <VisuallyHidden>
           <input
             type="file"
@@ -166,6 +224,7 @@ export default function TemasForm() {
           />
         </Flex>
       </Flex>
+      <MessagesHandler messageType={saveResultType} messageContent={saveMessage} />
     </Grid>
   );
 }

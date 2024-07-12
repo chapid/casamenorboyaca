@@ -11,6 +11,8 @@
   "dependencies": {
     "@aws-amplify/ui-react": "^6.1.6",
     "@aws-amplify/ui-react-storage": "^3.0.16",
+    "@aws-sdk/s3-presigned-post": "^3.549.0",
+    "@aws-sdk/s3-request-presigner": "^3.549.0",
     "@nextui-org/react": "^2.2.10",
     "autoprefixer": "^10.4.19",
     "aws-amplify": "^6.0.23",

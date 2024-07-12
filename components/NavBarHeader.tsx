@@ -11,24 +11,24 @@ export default function NavBarHeader ({user, signOut}: {user: any, signOut: any}
   </NavbarBrand>
   <NavbarContent className="hidden sm:flex gap-4" justify="center">
     <NavbarItem>
-      <Link color="foreground" href="#">
+      <Link color="foreground" href="/capacitaciones">
         Capacitaciones
       </Link>
     </NavbarItem>
     <NavbarItem isActive>
-      <Link href="#" aria-current="page">
-        Registro de asistencia
+      <Link href="/materiales" aria-current="page">
+        Materiales y herramientas
       </Link>
     </NavbarItem>
-    <NavbarItem>
-      <Link color="foreground" href="#">
-        Contactenos
+    <NavbarItem className={user ? 'visible':'hidden'}>
+      <Link color="foreground" href="/gestion">
+        Gestión de datos
       </Link>
     </NavbarItem>
   </NavbarContent>
   <NavbarContent justify="end">
-  <p className={user ? '':'hidden'}>Bienvenido {user?.username}</p>  
-  {user ? <Button onClick={signOut}>Salir</Button> : <p>Invitado</p>}    
+   
+  {user ? <Button onClick={signOut}>Salir</Button> : <Link color="foreground" href="/gestion">Entrar</Link>}    
   </NavbarContent>
 </Navbar>;
 };

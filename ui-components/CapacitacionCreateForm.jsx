@@ -37,8 +37,8 @@ export default function CapacitacionCreateForm(props) {
     setErrors({});
   };
   const validations = {
-    descripcion: [],
-    fechaInicio: [],
+    descripcion: [{ type: "Required" }],
+    fechaInicio: [{ type: "Required" }],
     fechaFin: [],
   };
   const runValidationTasks = async (
@@ -125,7 +125,7 @@ export default function CapacitacionCreateForm(props) {
     >
       <TextField
         label="Descripcion"
-        isRequired={false}
+        isRequired={true}
         isReadOnly={false}
         value={descripcion}
         onChange={(e) => {
@@ -151,7 +151,7 @@ export default function CapacitacionCreateForm(props) {
       ></TextField>
       <TextField
         label="Fecha inicio"
-        isRequired={false}
+        isRequired={true}
         isReadOnly={false}
         value={fechaInicio}
         onChange={(e) => {

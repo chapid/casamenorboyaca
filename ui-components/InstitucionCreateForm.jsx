@@ -29,7 +29,7 @@ export default function InstitucionCreateForm(props) {
     setErrors({});
   };
   const validations = {
-    nombreInstitucion: [],
+    nombreInstitucion: [{ type: "Required" }],
   };
   const runValidationTasks = async (
     fieldName,
@@ -113,7 +113,7 @@ export default function InstitucionCreateForm(props) {
     >
       <TextField
         label="Nombre institucion"
-        isRequired={false}
+        isRequired={true}
         isReadOnly={false}
         value={nombreInstitucion}
         onChange={(e) => {

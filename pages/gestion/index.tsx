@@ -1,59 +1,90 @@
-import {MunicipioCreateForm} from "@/ui-components";
+import { MunicipioCreateForm } from "@/ui-components";
 import InstitucionesForm from "../../components/InstitucionesForm";
+import CapacitacionesForm from "@/components/CapacitacionesForm";
 import ListaInstituciones from "@/components/ListaInstituciones";
 import ListaMunicipios from "@/components/ListaMunicipios";
 import ListaTemas from "@/components/ListaTemas";
+import ListaCapacitaciones from "@/components/ListaCapacitaciones";
 import TemasForm from "@/components/TemasForm";
 import { withAuthenticator, Button } from '@aws-amplify/ui-react';
-import React from "react";
+import { useState } from "react";
+import { InstitutionIdContext, TemaIdContext, CapacitacionIdContext } from "@/components/IdContext";
 
-import {Tabs, Tab, Card, CardBody, CardHeader, Divider} from "@nextui-org/react";
+import { Tabs, Tab, Card, CardBody, CardHeader, Divider, CardFooter, Image } from "@nextui-org/react";
 
-function Page({user, signOut}: {user: any, signOut: any}) {
-    const [selected, setSelected] = React.useState("municipios");
-    return (
-        <div className="flex w-full flex-col">
-        <Card>
-          <CardHeader>
-            <h2>Gestión de datos</h2>
-          </CardHeader>
-        </Card>
-        <Tabs 
-          aria-label="Options"         
-          selectedKey={selected}
-          onSelectionChange={(e) => setSelected(e.toString())}
-        >
-          <Tab key="municipios" title="Municipios">
-            <Card>
-              <CardBody>
-              <MunicipioCreateForm onError={(model, error)=>console.log(error)} />
-                <Divider className="my-4" />
-                <ListaMunicipios />
-              </CardBody>
-            </Card>  
-          </Tab>
-          <Tab key="instituciones" title="Instituciones">
-            <Card>
-              <CardBody>
-                <InstitucionesForm />
-                <Divider className="my-4" />
-                
-                <ListaInstituciones />
-              </CardBody>
-            </Card>  
-          </Tab>
-          <Tab key="temas" title="Temas">
-            <Card>
-              <CardBody>
-                <TemasForm />
-                <Divider className="my-4" />
-                <ListaTemas />
-              </CardBody>
-            </Card>  
-          </Tab>
-        </Tabs>
-      </div>       
-    );
+function Page() {
+  const [selected, setSelected] = useState("capacitaciones");
+  const [institucionId, setInstitucionId] = useState<string>("");
+  const [temaId, setTemaId] = useState<string>("");
+  const [capacitacionId, setCapacitacionId] = useState<string>("");
+
+  return (
+    <div className="flex px-5 w-full flex-col">
+      <Card isFooterBlurred>
+        <Image
+          removeWrapper
+          alt="Card example background"
+          className="z-0 w-full max-h-40 scale-125 -translate-y-5 object-cover"
+          src="/banner1.svg"
+        />
+        <CardFooter className="absolute bg-white/30 bottom-0 border-t-1 border-zinc-100/50 z-10 justify-between">
+          <div>
+            <h4 className="text-black font-medium text-2xl">Gestión de datos</h4>
+          </div>
+        </CardFooter>
+      </Card>
+      
+      <Tabs
+        aria-label="Options"
+        selectedKey={selected}
+        onSelectionChange={(e) => setSelected(e.toString())}
+      >
+        <Tab key="capacitaciones" title="Capacitaciones">
+          <Card>
+            <CardBody>
+              <CapacitacionIdContext.Provider value={{capacitacionId: capacitacionId, setCapacitacionId}}>
+              <CapacitacionesForm />
+              <Divider className="my-4" />
+              <ListaCapacitaciones />
+              </CapacitacionIdContext.Provider>
+            </CardBody>
+          </Card>
+        </Tab>
+        <Tab key="municipios" title="Municipios">
+          <Card>
+            <CardBody>
+              <MunicipioCreateForm onError={(model, error) => console.log(error)} />
+              <Divider className="my-4" />
+              <ListaMunicipios />
+            </CardBody>
+          </Card>
+        </Tab>
+        <Tab key="instituciones" title="Instituciones">
+          <Card>
+            <CardBody>
+            <InstitutionIdContext.Provider value={{institucionId: institucionId, setInstitucionId}}>
+              <InstitucionesForm />
+              <Divider className="my-4" />
+              <ListaInstituciones />
+            </InstitutionIdContext.Provider>
+            </CardBody>
+          </Card>
+        </Tab>
+        <Tab key="temas" title="Temas">
+          <Card>
+            <CardBody>
+              <TemaIdContext.Provider value={{temaId: temaId, setTemaId}}>                
+              <TemasForm />
+              <Divider className="my-4" />
+              <ListaTemas />
+              </TemaIdContext.Provider>
+            </CardBody>
+          </Card>
+        </Tab>
+      </Tabs>
+      </div>
+    
+  );
 }
 
 export default withAuthenticator(Page);

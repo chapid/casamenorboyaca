@@ -51,7 +51,7 @@ export default function InstitucionUpdateForm(props) {
   }, [idProp, institucionModelProp]);
   React.useEffect(resetStateValues, [institucionRecord]);
   const validations = {
-    nombreInstitucion: [],
+    nombreInstitucion: [{ type: "Required" }],
   };
   const runValidationTasks = async (
     fieldName,
@@ -79,7 +79,7 @@ export default function InstitucionUpdateForm(props) {
       onSubmit={async (event) => {
         event.preventDefault();
         let modelFields = {
-          nombreInstitucion: nombreInstitucion ?? null,
+          nombreInstitucion,
         };
         const validationResponses = await Promise.all(
           Object.keys(validations).reduce((promises, fieldName) => {
@@ -133,7 +133,7 @@ export default function InstitucionUpdateForm(props) {
     >
       <TextField
         label="Nombre institucion"
-        isRequired={false}
+        isRequired={true}
         isReadOnly={false}
         value={nombreInstitucion}
         onChange={(e) => {

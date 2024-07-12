@@ -13,8 +13,9 @@ const schema = a.schema({
       nombreInstitucion: a.string().required(),
       municipio: a.belongsTo('Municipio'),
       asistentes: a.hasMany('Asistente'),
+      capacitaciones: a.hasMany('Capacitacion'),
     })
-    .authorization([a.allow.owner(), a.allow.public('iam').to(['read'])]),  
+    .authorization([a.allow.private().to(['read', 'update', 'create', 'delete']), a.allow.public('iam').to(['read'])]),  
   Municipio: a
     .model({
       nombreMunicipio: a.string().required(),
@@ -29,22 +30,24 @@ const schema = a.schema({
       telefono: a.string(),
       instituciones: a.belongsTo('Institucion'),
       capacitacione: a.belongsTo('Capacitacion'),
+      ipAddress: a.string(),
     })
     .authorization([a.allow.public('iam').to(['create']), a.allow.private().to(['read', 'update', 'delete'])]), 
   Tema: a
     .model({
       nombreTema: a.string().required(),
       descripcion: a.string().required(),
-      capacitaciones: a.hasMany('Capacitacion'),
+      capacitaciones: a.manyToMany('Capacitacion', {relationName: 'CapacitacionTema'}),
     })
-    .authorization([a.allow.owner(), a.allow.public('iam').to(['read'])]),  
+    .authorization([a.allow.private().to(['read', 'update', 'create', 'delete']), a.allow.public('iam').to(['read'])]),  
   Capacitacion: a
     .model({
       descripcion: a.string().required(),
       fechaInicio: a.string().required(),
       fechaFin: a.string(),
-      temas: a.hasMany('Tema'),
+      temas: a.manyToMany('Tema', {relationName: 'CapacitacionTema'}),
       asistentes: a.hasMany('Asistente'),
+      institucion: a.belongsTo('Institucion'),
     })
     .authorization([a.allow.owner(), a.allow.public('iam').to(['read'])]),
 });
