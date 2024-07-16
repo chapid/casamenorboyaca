@@ -11,7 +11,8 @@ const RegistroAsistenciaForm: React.FC = () => {
     const [correo, setCorreo] = useState('');
     const [capacitacionesOptions, setCapacitacionesOptions] = useState(new Array<ComboBoxOption>());
     const [capacitaciones, setCapacitaciones] = useState<Schema['Capacitacion'][]>([]);
-    const [capacitacion, setCapacitacion] = useState('');
+    const [capacitacionId, setCapacitacionId] = useState('');
+    const [capacitacionNombre, setCapacitacionNombre] = useState('');
     const [saveResultType, setSaveResultType] = useState("");
     const [saveMessage, setSaveMessage] = useState("");
     const client = generateClient<Schema>({
@@ -46,7 +47,7 @@ const RegistroAsistenciaForm: React.FC = () => {
                 nombre: nombre,
                 apellido: apellido,
                 correo: correo,
-                capacitacione: capacitaciones.find((i) => i.id === capacitacion)
+                capacitacione: capacitaciones.find((i) => i.id.toString() === capacitacionId)
             });
 
             setSaveMessage("Asistente registrado exitosamente");
@@ -112,13 +113,19 @@ const RegistroAsistenciaForm: React.FC = () => {
                     label="Capacitación"
                     required
                     placeholder="Seleccione la capacitación a la que asistió"
-                    value={capacitacion}
+                    value={capacitacionNombre}
                     options={capacitacionesOptions}
                     onClear={() => {
-                        setCapacitacion("");
+                        setCapacitacionId("");
+                        setCapacitacionNombre("");
+                    }}                
+                    onSelect={(e) => {                    
+                        setCapacitacionNombre(e.label);
+                        setCapacitacionId(e.id);
                     }}
-                    onSelect={(e) => {
-                        setCapacitacion(e.value);
+                    onChange={(e) => {
+                        let { value } = e.target;
+                        setCapacitacionNombre(value);
                     }}
                     menuSlots={{
                         Empty: <View>No se encontraron resultados</View>,

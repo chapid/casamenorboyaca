@@ -99,7 +99,7 @@ export default function ListaTemas() {
                         </Tooltip>
                         <Tooltip content="Descargar presentación">
                             <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                                <LuDownload onClick={() => downloadFile(`temas/${tema.id}.pdf`)} />
+                                <LuDownload onClick={() => downloadFile(tema.id)} />
 
                             </span>
                         </Tooltip>
@@ -136,19 +136,18 @@ export default function ListaTemas() {
     async function downloadFile(name: string) {
         try {
             const response = await fetch(
-                process.env.NEXT_PUBLIC_BASE_URL + `/api/download`,
-                {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ key: name }),
-                }
+                process.env.NEXT_PUBLIC_BASE_URL + `/api/download?filename=temas/${name}.pdf`,    
+                {method: 'GET'}           
             )
-            if (response.ok) {
-                const { url } = await response.json()
+        
+            if (response.ok) {                
+                const url = await response.headers.get('url')
                 console.log('Got presigned URL:', url)
-
+                if (!url) {
+                    console.error('S3 Upload Error:', response.body)
+                    alert('Falló la pre-carga de la presentación.')
+                    return
+                }
                 const uploadResponse = await fetch(url)
 
                 if (uploadResponse.ok) {
@@ -163,6 +162,7 @@ export default function ListaTemas() {
                     alert('Falló la carga de la presentación.')
                 }
             } else {
+                console.error('S3 Upload Error:', response.body)
                 alert('Falló la pre-carga de la presentación.')
             }
         } catch (error) {

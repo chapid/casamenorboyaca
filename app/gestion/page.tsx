@@ -1,3 +1,4 @@
+'use client'
 import { MunicipioCreateForm } from "@/ui-components";
 import InstitucionesForm from "../../components/InstitucionesForm";
 import CapacitacionesForm from "@/components/CapacitacionesForm";

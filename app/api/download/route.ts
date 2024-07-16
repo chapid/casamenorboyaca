@@ -1,20 +1,20 @@
-import type { NextApiRequest, NextApiResponse } from "next";
+
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner"
 import { S3Client, GetObjectCommand } from '@aws-sdk/client-s3'
-
+import { type NextRequest } from 'next/server'
 /**
  * This route is used to get presigned url for downloading file from S3
  */
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse,
-) {
-  const { key } = req.body;
+export async function GET(req: NextRequest) {
+  const searchParams = req.nextUrl.searchParams
+  const key = searchParams.get('filename')
 
-  if (!key || typeof key !== "string") {
-    return res.status(400).json({ message: "Missing or invalid id" });
+  if (!key || typeof key !== "string") {  
+    return new Response(`Missing or invalid id`, {
+      status: 400,
+    })  
   }
-
+  console.log('key',key);
   try {
     const client = new S3Client({ 
     region: process.env.AWS_REGION,
@@ -30,9 +30,15 @@ export default async function handler(
       })
     // Generate pre-signed URL for PUT request
     const url = await getSignedUrl(client, getCommand, { expiresIn: 60 })
-    res.status(200).json({ url })
+    return new Response('Link generado exitosamente', {
+      status: 200,
+      headers: { url },
+    })    
   } catch (error: any) {
-    res.status(200).json({ error: error.message })
+    console.error('Error:', error)
+    return new Response(`Error de generacion ${error.message}`, {
+      status: 400,
+    })
   }  
 
 }

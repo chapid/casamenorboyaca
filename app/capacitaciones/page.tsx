@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+'use client'
+import { useState, useEffect, use } from 'react';
 import { generateClient } from 'aws-amplify/data';
 import type { Schema } from '@/amplify/data/resource';
 import { getCurrentUser } from 'aws-amplify/auth';

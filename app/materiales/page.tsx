@@ -1,3 +1,4 @@
+'use client'
 import { useState, useEffect, use } from 'react';
 import { generateClient } from 'aws-amplify/data';
 import type { GraphQLAuthMode } from '@aws-amplify/core/internals/utils';

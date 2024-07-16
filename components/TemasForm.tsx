@@ -62,8 +62,12 @@ export default function TemasForm() {
         }
       )
       if (response.ok) {
-        const { url } = await response.json()        
-        
+        const url = await response.headers.get('url')      
+        if (!url) {
+          alert('Falló la pre-carga de la presentación.')
+          return
+        }
+
         const uploadResponse = await fetch(url, {
           body: files[0],
           method: "PUT",

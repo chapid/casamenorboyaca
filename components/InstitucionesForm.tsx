@@ -86,21 +86,22 @@ export default function InstitucionesForm() {
           console.error(err);          
         }
       }}
-      
     >
 
       <Autocomplete
         label="Municipio"    
         placeholder="Seleccione un municipio"
-        value={nombreMunicipio}
-        onChange={(e) => {
-          let { value } = e.target;          
-          setNombreMunicipio(value);
-        }}
+        value={nombreMunicipio}      
         options={municipioOptions}
         onSelect={(e) => {        
           setMunicipio(e.id);
-        }}      
+          setNombreMunicipio(e.label);
+        }}   
+        onChange={(e) => {
+          let { value } = e.target;          
+          setMunicipio("");
+          setNombreMunicipio(value);
+        }}   
       />
       <TextField
         label="Nombre institucion"

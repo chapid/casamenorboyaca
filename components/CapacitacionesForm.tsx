@@ -6,13 +6,13 @@ import { useState, useEffect } from 'react';
 import type { Schema } from '@/amplify/data/resource';
 import { CheckboxGroup, Checkbox } from "@nextui-org/react";
 import MessagesHandler from "./MessagesHandler";
+import { on } from "events";
 
 //Define the options type with id and label
 type Option = {
     id: string;
     label: string;
 }
-
 
 const client = generateClient<Schema>();
 export default function CapacitacionesForm() {
@@ -179,7 +179,7 @@ export default function CapacitacionesForm() {
                     resetStateValues();
                     setSaveResultType("success");                    
                 } catch (err: any) {
-                    console.error(err);
+                    console.error(err.toString());
                     setSaveResultType("error");
                     setSaveMessage("Error al crear la capacitación");
                 }
@@ -199,6 +199,10 @@ export default function CapacitacionesForm() {
                         setNombreInstitucion("");                    
                         setMunicipio(null);
                         setNombreMunicipio("");
+                    }}
+                    onChange={(e) => {
+                        let { value } = e.target;
+                        setNombreMunicipio(value);
                     }}
                     onSelect={(e) => {
                         changeMunicipio(e);
@@ -223,8 +227,11 @@ export default function CapacitacionesForm() {
                     onClear={() => {
                         setInstitucion(null);
                         setNombreInstitucion("");
-                    }
-                    }
+                    }}
+                    onChange={(e) => {
+                        let { value } = e.target;
+                        setNombreInstitucion(value);
+                    }}
                     menuSlots={{
                         Empty: <View>No se encontraron resultados</View>,
                       }}
