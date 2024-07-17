@@ -10,9 +10,7 @@ type Data = {
 
 export async function POST(req: Request) {
   const reqBody = await req.json();
-  console.log(reqBody);
   const { filename, contentType } = await reqBody
-  console.log(filename, contentType)
 
   try {
     const client = new S3Client({
@@ -33,8 +31,9 @@ export async function POST(req: Request) {
     return new Response('Subida exitosa', {
       status: 200,
       headers: { url },
-    }) 
+    })     
   } catch (error: any) {
+    console.log("error subida", error);
     return new Response(`Error de subida ${error.message}`, {
       status: 400,
     })

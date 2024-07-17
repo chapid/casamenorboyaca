@@ -141,7 +141,7 @@ export default function ListaTemas() {
             )
         
             if (response.ok) {                
-                const url = await response.headers.get('url')
+                const url = response.headers.get('url')
                 console.log('Got presigned URL:', url)
                 if (!url) {
                     console.error('S3 Upload Error:', response.body)
@@ -158,15 +158,15 @@ export default function ListaTemas() {
                     link.download = name;
                     link.click();
                 } else {
-                    console.error('S3 Upload Error:', uploadResponse)
+                    console.error('S3 Download Error:', uploadResponse)
                     alert('Falló la carga de la presentación.')
                 }
             } else {
-                console.error('S3 Upload Error:', response.body)
+                console.error('S3 Download Error:', response.body)
                 alert('Falló la pre-carga de la presentación.')
             }
         } catch (error) {
-            console.log('Error : ', error);
+            console.log('Error download: ', error);
         }
     }
 
