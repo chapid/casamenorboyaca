@@ -16,17 +16,17 @@ export async function POST(req: Request) {
 
   try {
     const client = new S3Client({
-      region: process.env.AWS_REGION,
+      region: process.env.REGION,
       credentials: {
-        accessKeyId: process.env.AWS_ACCESS_KEY_ID as string,
-        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY as string,
+        accessKeyId: process.env.ACCESS_KEY_ID as string,
+        secretAccessKey: process.env.SECRET_ACCESS_KEY as string,
       },
     })
     // PutObjectCommand: used to generate a pre-signed URL for uploading
     const putCommand = new PutObjectCommand({
       Key: filename,
       ContentType: contentType,
-      Bucket: process.env.AWS_BUCKET_NAME,
+      Bucket: process.env.BUCKET_NAME,
     })
     // Generate pre-signed URL for PUT request
     const url = await getSignedUrl(client, putCommand, { expiresIn: 600 })

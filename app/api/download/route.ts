@@ -17,16 +17,16 @@ export async function GET(req: NextRequest) {
   console.log('key',key);
   try {
     const client = new S3Client({ 
-    region: process.env.AWS_REGION,
+    region: process.env.REGION,
     credentials: {
-        accessKeyId: process.env.AWS_ACCESS_KEY_ID as string,
-        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY as string,
+        accessKeyId: process.env.ACCESS_KEY_ID as string,
+        secretAccessKey: process.env.SECRET_ACCESS_KEY as string,
     },               
     })
     // GetObjectCommand: used to generate a pre-signed URL for viewing.
     const getCommand = new GetObjectCommand({
         Key: key,
-        Bucket: process.env.AWS_BUCKET_NAME,
+        Bucket: process.env.BUCKET_NAME,
       })
     // Generate pre-signed URL for PUT request
     const url = await getSignedUrl(client, getCommand, { expiresIn: 60 })
