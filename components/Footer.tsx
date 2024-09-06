@@ -1,5 +1,7 @@
 import React from 'react';
 import Image from 'next/image';
+import { TfiYoutube } from "react-icons/tfi";
+import Link from 'next/link';
 
 const Footer: React.FC = () => {
     return (
@@ -12,15 +14,14 @@ const Footer: React.FC = () => {
 			
 				<span className="self-center text-xl font-semibold whitespace-nowrap dark:text-white">Casa del menor</span>
 			</a>
-			<ul className="flex flex-wrap items-center mb-6 sm:mb-0">
-				<li>
-					<a href="#" className="mr-4 text-sm text-gray-500 hover:underline md:mr-6 dark:text-gray-400">Acerca de</a>
-				</li>
+			<ul className="flex flex-wrap items-center mb-6 sm:mb-0">				
 				<li>
 					<a href="#" className="mr-4 text-sm text-gray-500 hover:underline md:mr-6 dark:text-gray-400">Política de privacidad y tratamiento de datos</a>
 				</li>			
+				
 				<li>
-					<a href="#" className="text-sm text-gray-500 hover:underline dark:text-gray-400">Contacto</a>
+				<Link href="https://youtube.com/@casadelmenormarcofidelsuar2903?si=IEJZo2OLK80caoOa" rel="noopener noreferrer" target="_blank" className='text-6xl text-red-600'> <TfiYoutube/> </Link>
+				
 				</li>
 			</ul>
 		</div>
