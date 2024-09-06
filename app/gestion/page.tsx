@@ -1,15 +1,19 @@
 'use client'
-import { MunicipioCreateForm } from "@/ui-components";
+
 import InstitucionesForm from "../../components/InstitucionesForm";
+import MunicipiosForm from "@/components/MunicipiosForm";
 import CapacitacionesForm from "@/components/CapacitacionesForm";
 import ListaInstituciones from "@/components/ListaInstituciones";
 import ListaMunicipios from "@/components/ListaMunicipios";
 import ListaTemas from "@/components/ListaTemas";
 import ListaCapacitaciones from "@/components/ListaCapacitaciones";
 import TemasForm from "@/components/TemasForm";
-import { withAuthenticator, Button } from '@aws-amplify/ui-react';
+import ListaUsuarios from "@/components/ListaUsuarios";
+import ReportForm from "@/components/Estadisticas";
+import NotAuthorized from "@/components/NotAuthorized";
+import { useAuthenticator } from '@aws-amplify/ui-react';
 import { useState } from "react";
-import { InstitutionIdContext, TemaIdContext, CapacitacionIdContext } from "@/components/IdContext";
+import { InstitutionIdContext, TemaIdContext, CapacitacionIdContext, MunicipioIdContext } from "@/components/IdContext";
 
 import { Tabs, Tab, Card, CardBody, CardHeader, Divider, CardFooter, Image } from "@nextui-org/react";
 
@@ -18,8 +22,13 @@ function Page() {
   const [institucionId, setInstitucionId] = useState<string>("");
   const [temaId, setTemaId] = useState<string>("");
   const [capacitacionId, setCapacitacionId] = useState<string>("");
+  const [municipioId, setMunicipioId] = useState<string>("");
+  const { authStatus } = useAuthenticator(context => [context.authStatus]);
 
   return (
+    <>
+    {authStatus === 'configuring' && 'Cargando...'}
+    {authStatus !== 'authenticated' ? <NotAuthorized /> : 
     <div className="flex px-5 w-full flex-col">
       <Card isFooterBlurred>
         <Image
@@ -54,9 +63,11 @@ function Page() {
         <Tab key="municipios" title="Municipios">
           <Card>
             <CardBody>
-              <MunicipioCreateForm onError={(model, error) => console.log(error)} />
+              <MunicipioIdContext.Provider value={{municipioId: municipioId, setMunicipioId}}>
+              <MunicipiosForm />
               <Divider className="my-4" />
               <ListaMunicipios />
+              </MunicipioIdContext.Provider>
             </CardBody>
           </Card>
         </Tab>
@@ -82,10 +93,25 @@ function Page() {
             </CardBody>
           </Card>
         </Tab>
+        <Tab key="usuarios" title="Usuarios">
+          <Card>
+            <CardBody>
+              <ListaUsuarios />
+            </CardBody>
+          </Card>
+        </Tab>
+        <Tab key="estadisticas" title="Estadisticas">
+          <Card>
+            <CardBody>
+              <ReportForm />
+            </CardBody>
+          </Card>
+        </Tab>
       </Tabs>
       </div>
-    
+      }
+      </>
   );
 }
 
-export default withAuthenticator(Page);
+export default Page;

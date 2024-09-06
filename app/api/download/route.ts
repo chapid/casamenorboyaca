@@ -29,7 +29,7 @@ export async function GET(req: NextRequest) {
         Bucket: process.env.NEXT_PUBLIC_BUCKET_NAME,
       })
     // Generate pre-signed URL for PUT request
-    const url = await getSignedUrl(client, getCommand, { expiresIn: 60 })
+    const url = await getSignedUrl(client, getCommand, { expiresIn: 120 })
     return new Response('Link generado exitosamente', {
       status: 200,
       headers: { url },

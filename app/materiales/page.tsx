@@ -4,16 +4,28 @@ import { generateClient } from 'aws-amplify/data';
 import type { GraphQLAuthMode } from '@aws-amplify/core/internals/utils';
 import type { Schema } from '@/amplify/data/resource';
 import { getCurrentUser } from 'aws-amplify/auth';
-import { Card, CardBody, CardHeader, Divider, CardFooter, Image } from "@nextui-org/react";
-import RegistroAsistenciaForm from '@/components/RegistroAsistenciaForm';
+import { Card, CardBody, CardHeader, Divider, CardFooter, Image, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure } from "@nextui-org/react";
+import { RegistroAsistenciaForm } from '@/components/RegistroAsistenciaForm';
 import { FaDownload } from "react-icons/fa6";
 import { Button } from "@nextui-org/react";
+import { PDFViewer } from '@/components/PdfViewer';
+import dynamic from 'next/dynamic';
 
 //const client = generateClient<Schema>();
 
-function Page() {
-  const [temas, setTemas] = useState<Schema['Tema'][]>([]);
+
+
+function Materiales() {
+  const [temas, setTemas] = useState<Schema['Tema']['type'][]>([]);
   const [client, setClient] = useState<any>('');
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [pdfUrl, setPdfUrl] = useState('');
+  const [assistantName, setAssistantName] = useState('');
+  
+  const PDFViewer = dynamic(
+    () => import('@/components/PdfViewer').then(mod => mod.PDFViewer),
+    { ssr: false }
+  )
 
   async function listMunicipios() {
     const data = await client.models.Tema.list();
@@ -46,7 +58,7 @@ function Page() {
     setClient(client);
   }
 
-  async function downloadFile(name: string) {
+  /*async function downloadFile(name: string) {
     try {
       const response = await fetch(
         process.env.NEXT_PUBLIC_BASE_URL + `/api/download?filename=temas/${name}.pdf`,
@@ -81,11 +93,35 @@ function Page() {
     } catch (error) {
       console.log('Error download: ', error);
     }
+  }*/
+
+ async function getUrl(name: string) {
+    try {
+      const response = await fetch(
+        process.env.NEXT_PUBLIC_BASE_URL + `/api/download?filename=temas/${name}.pdf`,
+        { method: 'GET' }
+      )
+
+      if (response.ok) {
+        const url = response.headers.get('url')      
+        if (!url) {
+          console.error('S3 Upload Error:', response.body)
+          alert('Falló la pre-carga de la presentación.')
+          return
+        }
+        setPdfUrl(url);
+      } else {
+        console.error('S3 Download Error:', response.body)
+        alert('Falló la pre-carga de la presentación.')
+      }
+    } catch (error) {
+      console.log('Error download: ', error);
+    }
   }
 
   return (
     <div>
-      <Card isFooterBlurred radius='none'>
+      <Card isFooterBlurred>
         <Image
           removeWrapper
           alt="Card example background"
@@ -98,27 +134,62 @@ function Page() {
           </div>
         </CardFooter>
       </Card>
-
-      <Card className='p-'>
+      <Modal
+        size='full'
+        scrollBehavior='inside'
+        isOpen={isOpen}
+        onClose={onClose}
+      >
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader className="flex flex-col gap-1">Presentaci&oacute;n</ModalHeader>
+              <ModalBody>
+                <PDFViewer url={pdfUrl} />                
+              </ModalBody>
+              <ModalFooter>
+                <Button color="danger" variant="light" onPress={onClose}>
+                  Cerrar
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
+      <Card >
         <CardBody>
+        
           <div className='flex w-full'>
-            <div className='grid sm:grid-cols-4 grid-cols-2 gap-4 w-2/3'>
+          
+            <div className='w-2/3 bg-gradient-to-tr from-amber-500 via-violet-600 to-indigo-600 rounded-md text-white'>
+            <h2 className={`text-2xl ${assistantName ? 'visible':'hidden'} content-center py-2 text-center`}>Gracias por tu registro {assistantName}!</h2>
+              <div className='grid sm:grid-cols-4 grid-cols-2 gap-4 justify-center items-center h-3/4'>
               {temas.map((tema, index) => (
-                <div key={index} className='flex justify-center items-center'>
-                  <div className='text-black border-2 border-blue-500 p-2 rounded-lg h-20'>
+                <div key={index} className='flex justify-center items-center'>                  
+                  <div className='border-2 border-white-500 p-2 rounded-lg h-20'>
                     <h5>{tema.nombreTema}</h5>
-                    <Button color="primary" variant="ghost" endContent={<FaDownload />} onClick={() => downloadFile(tema.id)}>
-                    Descargar presentaci&oacute;n
+                    <Button color="default" variant="ghost" endContent={<FaDownload />} onClick={() => {
+                      if (assistantName === '') {
+                        alert('Por favor completa el formulario para poder descargar los materiales');
+                        return;
+                      }
+                      getUrl(tema.id);
+                      if (pdfUrl){
+                        console.log('pdfUrl', pdfUrl);
+                        onOpen()
+                      }
+                      }}>
+                      Abrir presentaci&oacute;n
                     </Button>
-                    
                   </div>
                 </div>
               ))}
+              </div>
             </div>
-            <div className='w-1/3'>
+            <div className='w-1/3 px-2'>
               <h2 className='text-2xl'>¡Queremos conocerte!</h2>
               <p>Para poder brindarte una mejor experiencia, por favor completa el siguiente formulario.</p>
-              <RegistroAsistenciaForm />
+              <RegistroAsistenciaForm setAssistantName={setAssistantName} />
             </div>
           </div>
         </CardBody>
@@ -127,4 +198,4 @@ function Page() {
   );
 }
 
-export default Page;
+export default Materiales;

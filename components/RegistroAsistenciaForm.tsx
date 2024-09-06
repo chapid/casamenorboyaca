@@ -4,20 +4,24 @@ import MessagesHandler from "./MessagesHandler";
 import { generateClient } from "aws-amplify/api";
 import type { Schema } from '@/amplify/data/resource';
 
+interface RegistroAsistenciaFormProps {
+    setAssistantName: (name: string) => void;
+}
 
-const RegistroAsistenciaForm: React.FC = () => {
+export function RegistroAsistenciaForm ({setAssistantName}:RegistroAsistenciaFormProps) {
     const [nombre, setNombre] = useState('');
     const [apellido, setApellido] = useState('');
     const [correo, setCorreo] = useState('');
     const [capacitacionesOptions, setCapacitacionesOptions] = useState(new Array<ComboBoxOption>());
-    const [capacitaciones, setCapacitaciones] = useState<Schema['Capacitacion'][]>([]);
+    const [capacitaciones, setCapacitaciones] = useState<Schema['Capacitacion']['type'][]>([]);
     const [capacitacionId, setCapacitacionId] = useState('');
     const [capacitacionNombre, setCapacitacionNombre] = useState('');
     const [saveResultType, setSaveResultType] = useState("");
     const [saveMessage, setSaveMessage] = useState("");
+    
     const client = generateClient<Schema>({
         authMode: 'iam'
-      });
+    });
 
     async function loadCapacitaciones() {
         const { data } = await client.models.Capacitacion.list({ limit: 1000 });
@@ -25,17 +29,14 @@ const RegistroAsistenciaForm: React.FC = () => {
         setCapacitacionesOptions(data.map((capacitacion: { id: any; descripcion: any; }) => ({ id: capacitacion.id, label: capacitacion.descripcion })));
     }
 
-    useEffect(() => {      
+    useEffect(() => {
         loadCapacitaciones();
-      }, []);
-    
+    }, []);
+
 
 
     const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-
-        // TODO: Add your logic to handle form submission here
-
+        e.preventDefault();    
         setSaveResultType("");
         setSaveMessage("");
         if (nombre === "" || apellido === "" || correo === "") {
@@ -47,12 +48,12 @@ const RegistroAsistenciaForm: React.FC = () => {
                 nombre: nombre,
                 apellido: apellido,
                 correo: correo,
-                capacitacione: capacitaciones.find((i) => i.id.toString() === capacitacionId)
+                capacitacionId: capacitacionId
             });
 
             setSaveMessage("Asistente registrado exitosamente");
-
             setSaveResultType("success");
+            setAssistantName(`${nombre} ${apellido}`);
             resetStateValues();
         } catch (err: any) {
             console.error(err);
@@ -95,7 +96,7 @@ const RegistroAsistenciaForm: React.FC = () => {
                     setApellido(value);
                 }}
             />
-            
+
             <TextField
                 label="Correo electrónico"
                 isRequired={true}
@@ -118,8 +119,8 @@ const RegistroAsistenciaForm: React.FC = () => {
                     onClear={() => {
                         setCapacitacionId("");
                         setCapacitacionNombre("");
-                    }}                
-                    onSelect={(e) => {                    
+                    }}
+                    onSelect={(e) => {
                         setCapacitacionNombre(e.label);
                         setCapacitacionId(e.id);
                     }}
@@ -129,7 +130,7 @@ const RegistroAsistenciaForm: React.FC = () => {
                     }}
                     menuSlots={{
                         Empty: <View>No se encontraron resultados</View>,
-                      }}
+                    }}
                 />
             </Flex>
 
@@ -137,7 +138,7 @@ const RegistroAsistenciaForm: React.FC = () => {
             <Flex
                 justifyContent="space-between"
             >
-                <Button                
+                <Button
                     type="reset"
                     onClick={(event) => {
                         event.preventDefault();
@@ -148,7 +149,7 @@ const RegistroAsistenciaForm: React.FC = () => {
                     gap="15px"
 
                 >
-                    <Button                    
+                    <Button
                         type="submit"
                         variation="primary"
                     >Guardar</Button>
@@ -158,5 +159,3 @@ const RegistroAsistenciaForm: React.FC = () => {
         </Grid>
     );
 };
-
-export default RegistroAsistenciaForm;

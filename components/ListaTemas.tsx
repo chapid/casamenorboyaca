@@ -5,9 +5,9 @@ import { generateClient } from "aws-amplify/api";
 import { useState, useEffect } from 'react';
 import type { Schema } from '@/amplify/data/resource';
 import { Pagination } from '@aws-amplify/ui-react';
-import { EditIcon } from "./EditIcon";
-import { DeleteIcon } from "./DeleteIcon";
-import { EyeIcon } from "./EyeIcon";
+import { FaEye } from "react-icons/fa";
+import { FaRegEdit } from "react-icons/fa";
+import { AiTwotoneDelete } from "react-icons/ai";
 import { LuDownload } from "react-icons/lu";
 
 const client = generateClient<Schema>();
@@ -32,7 +32,7 @@ const columns = [
 ];
 
 export default function ListaTemas() {
-    const [temas, setTemas] = useState<Schema['Tema'][]>([]);
+    const [temas, setTemas] = useState<Schema['Tema']['type'][]>([]);
     const [pageTokens, setPageTokens] = React.useState(new Array<string>());
     const [currentPageIndex, setCurrentPageIndex] = React.useState(1);
     const [hasMorePages, setHasMorePages] = React.useState(true);
@@ -89,12 +89,12 @@ export default function ListaTemas() {
                     <div className="relative flex items-center gap-2">
                         <Tooltip content="Detalles">
                             <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                                <EyeIcon />
+                                <FaEye />
                             </span>
                         </Tooltip>
                         <Tooltip content="Editar">
                             <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                                <EditIcon onClick={() => setTemaId(tema.id)}/>
+                                <FaRegEdit onClick={() => setTemaId(tema.id)}/>
                             </span>
                         </Tooltip>
                         <Tooltip content="Descargar presentación">
@@ -105,7 +105,7 @@ export default function ListaTemas() {
                         </Tooltip>
                         <Tooltip color="danger" content="Borrar">
                             <span className="text-lg text-danger cursor-pointer active:opacity-50">
-                                <DeleteIcon onClick={() => handleDeleteTema(tema.id)} />
+                                <AiTwotoneDelete onClick={() => handleDeleteTema(tema.id)} />
                             </span>
                         </Tooltip>
                     </div>
@@ -117,7 +117,7 @@ export default function ListaTemas() {
 
     function handleDeleteTema(id: string) {
         //Search if there are capacitaciones with this tema
-        client.models.CapacitacionTema.list({
+        client.models.Capacitacion.list({
             filter: {
                 temaId: {
                     eq: id

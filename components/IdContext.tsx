@@ -8,3 +8,6 @@ export const useTemaIdContext = () => useContext(TemaIdContext);
 export type CapacitacionIdContextType = {capacitacionId: string, setCapacitacionId: (id: string) => void};
 export const CapacitacionIdContext = createContext<CapacitacionIdContextType>({ capacitacionId: "", setCapacitacionId: () => {} });
 export const useCapacitacionIdContext = () => useContext(CapacitacionIdContext);
+export type MunicipioIdContextType = {municipioId: string, setMunicipioId: (id: string) => void};
+export const MunicipioIdContext = createContext<MunicipioIdContextType>({ municipioId: "", setMunicipioId: () => {} });
+export const useMunicipioIdContext = () => useContext(MunicipioIdContext);

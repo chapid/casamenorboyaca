@@ -6,12 +6,13 @@ import { generateClient } from "aws-amplify/api";
 import { useState, useEffect } from 'react';
 import type { Schema } from '@/amplify/data/resource';
 import { Pagination } from '@aws-amplify/ui-react';
-import { EditIcon } from "./EditIcon";
-import { DeleteIcon } from "./DeleteIcon";
-import { EyeIcon } from "./EyeIcon";
+import { AiTwotoneDelete } from "react-icons/ai";
+import { FaEye } from "react-icons/fa";
+import { FaRegEdit } from "react-icons/fa";
 import { MdAddPhotoAlternate } from "react-icons/md";
 import UploadCapacitacionesEvidences from "./UploadCapacitacionesEvidences";
-import { on } from "events";
+import DetallesCapacitacionModal from "./DetallesCapacitacionModal";
+
 
 const client = generateClient<Schema>();
 
@@ -47,6 +48,7 @@ export default function ListaCapacitaciones() {
     const [isOpenEv, setIsOpenEv] = React.useState(false);
     const { capacitacionId, setCapacitacionId } = useCapacitacionIdContext();
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
+    const [isOpenDetails, setIsOpenDetails] = React.useState(false);
     const [ asistentes, setAsistentes ] = useState(new Array<any>());
 
     const showAssistantsList = (listaAsistentes: React.SetStateAction<any[]>) => {
@@ -107,26 +109,29 @@ export default function ListaCapacitaciones() {
                     <Button onClick={ () => { 
                         if (capacitacion.asistentes?.length > 0)
                         showAssistantsList(capacitacion.asistentes)
-                    }}>{capacitacion.asistentes?.length}</Button>
+                    }}>{capacitacion.asistentes?.length || 0}</Button>
                 );
             case "acciones":
                 return (
                     <div className="relative flex items-center gap-2">
                         <Tooltip content="Detalles">
                             <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                                <EyeIcon />
+                                <FaEye onClick={() => {
+                                    setCapacitacionId(capacitacion.id);
+                                    setIsOpenDetails(true)
+                                }} />
                             </span>
                         </Tooltip>
                         <Tooltip content="Editar">
                             <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                                <EditIcon onClick={() => {
+                                <FaRegEdit onClick={() => {
                                     setCapacitacionId(capacitacion.id);
                                 }} />
                             </span>
                         </Tooltip>
                         <Tooltip color="danger" content="Borrar">
                             <span className="text-lg text-danger cursor-pointer active:opacity-50">
-                                <DeleteIcon onClick={() => handleDeleteCapacitacion(capacitacion.id)} />
+                                <AiTwotoneDelete onClick={() => handleDeleteCapacitacion(capacitacion.id)} />
                             </span>
                         </Tooltip>
                         <Tooltip content="Agregar evidencia">
@@ -155,7 +160,9 @@ export default function ListaCapacitaciones() {
 
     return (
         <div className="w-full">
+
             <UploadCapacitacionesEvidences capacitacionId="id" isOpen={isOpenEv} onCloseFunction={() => setIsOpenEv(false)} />
+            <DetallesCapacitacionModal capacitacionId={capacitacionId} isOpen={isOpenDetails} onCloseFunction={() => setIsOpenDetails(false)} />
             <p className="text-2xl text-center">Lista de capacitaciones</p>
             {loading ? <div className="w-full flex justify-center"><Spinner label="Cargando..." color="warning" /></div>
                 : <Table aria-label="Tabla de capacitaciones">

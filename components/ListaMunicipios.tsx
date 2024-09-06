@@ -20,30 +20,34 @@ const columns = [
 ];
 
 export default function ListaMunicipios() {
-  const [municipios, setMunicipios] = useState<Schema['Municipio'][]>([]);
+  const [municipios, setMunicipios] = useState<Schema['Municipio']["type"][]>([]);
   const [pageTokens, setPageTokens] = React.useState(new Array<string>());
   const [currentPageIndex, setCurrentPageIndex] = React.useState(1);
   const [hasMorePages, setHasMorePages] = React.useState(true);
   const [loading, setLoading] = React.useState(true);
 
-  const handlePageTurn = async (pageIndex: number) => {
-    if (hasMorePages || pageIndex <= pageTokens.length + 1) {
+  const handlePageTurn = async (page: number) => {
+    if (hasMorePages || page <= pageTokens.length + 1) {
       setLoading(true);
+
+      setCurrentPageIndex(page);
       const { data: municipio, nextToken } = await client.models.Municipio.list({
         limit: 10,
-        nextToken: pageIndex > 1 ? pageTokens[pageIndex - 2] : null
+        nextToken: pageTokens[page - 2]
       });
       setMunicipios(municipio);
 
       if (!nextToken) {
         setHasMorePages(false);
-      } else {
-
-        if (pageTokens.length < 1) {
-          setPageTokens([...pageTokens, nextToken]);
-        }
       }
-      setCurrentPageIndex(pageIndex);
+
+      if (page - 1 === pageTokens.length || page === 1 && pageTokens.length === 0) {
+        setPageTokens([...pageTokens, nextToken ?? '']);
+      }
+      console.log("pageIndex", page);
+      console.log("pageTokens", pageTokens);
+
+
       setLoading(false);
     }
   };
@@ -51,7 +55,7 @@ export default function ListaMunicipios() {
   useEffect(() => {
     const sub = client.models.Municipio.observeQuery().subscribe({
       next: ({ items, isSynced }) => {
-        handlePageTurn(1);
+        handlePageTurn(currentPageIndex);
       },
     });
     return () => sub.unsubscribe();
@@ -83,11 +87,20 @@ export default function ListaMunicipios() {
 
       <Pagination
         currentPage={currentPageIndex}
-        totalPages={pageTokens.length + 1}
+        totalPages={pageTokens.length}
         hasMorePages={hasMorePages}
-        onNext={() => handlePageTurn(currentPageIndex + 1)}
-        onPrevious={() => handlePageTurn(currentPageIndex - 1)}
-        onChange={(pageIndex) => handlePageTurn(pageIndex || 1)}
+        onNext={() => {
+          //setCurrentPageIndex(currentPageIndex+1);
+          handlePageTurn(currentPageIndex + 1)
+        }}
+        onPrevious={() => {
+          setCurrentPageIndex(currentPageIndex - 1);
+          handlePageTurn(currentPageIndex - 1)
+        }}
+        onChange={(pageIndex) => {
+          handlePageTurn(pageIndex || 1);
+        }
+        }
       />
 
     </div>

@@ -1,4 +1,9 @@
 import { defineAuth } from '@aws-amplify/backend';
+import { addUserToGroup } from "../data/add-user-to-group/resource"
+import { postConfirmation } from "./post-confirmation/resource"
+import { listUsersHandler } from '../data/list-users-handler/resource';
+import { activateDeactivateUser } from '../data/activate-deactivate-user/resource';
+import { getUserInfo } from '../data/get-user-info/resource';
 
 /**
  * Define and configure your auth resource
@@ -8,6 +13,19 @@ export const auth = defineAuth({
   loginWith: {
     email: {
       verificationEmailSubject: 'Bienvenido! Verifica tu email!'
-    },
+    },    
   },
+    
+  groups: ["ADMINS", "EDITORS"],
+  triggers: {
+    postConfirmation,
+  },
+  
+  access: (allow) => [
+    allow.resource(addUserToGroup).to(["addUserToGroup"]),
+    allow.resource(postConfirmation).to(["addUserToGroup"]),    
+    allow.resource(listUsersHandler).to(["listUsers"]),
+    allow.resource(activateDeactivateUser).to(["manageUsers"]),
+    allow.resource(getUserInfo).to(["manageUsers"]),
+  ],
 });

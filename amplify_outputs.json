@@ -1,0 +1,1211 @@
+{
+  "auth": {
+    "user_pool_id": "us-east-1_4OeI28B6U",
+    "aws_region": "us-east-1",
+    "user_pool_client_id": "5iujdoaitu01bev6tra6unphci",
+    "identity_pool_id": "us-east-1:d1d12c01-fb80-4692-94d2-8552423f175a",
+    "mfa_methods": [],
+    "standard_required_attributes": [
+      "email"
+    ],
+    "username_attributes": [
+      "email"
+    ],
+    "user_verification_types": [
+      "email"
+    ],
+    "mfa_configuration": "NONE",
+    "password_policy": {
+      "min_length": 8,
+      "require_lowercase": true,
+      "require_numbers": true,
+      "require_symbols": true,
+      "require_uppercase": true
+    },
+    "unauthenticated_identities_enabled": true
+  },
+  "data": {
+    "url": "https://rm44zejpqfcqtfrzwv3o4nfdku.appsync-api.us-east-1.amazonaws.com/graphql",
+    "aws_region": "us-east-1",
+    "default_authorization_type": "AMAZON_COGNITO_USER_POOLS",
+    "authorization_types": [
+      "AWS_IAM"
+    ],
+    "model_introspection": {
+      "version": 1,
+      "models": {
+        "Municipio": {
+          "name": "Municipio",
+          "fields": {
+            "id": {
+              "name": "id",
+              "isArray": false,
+              "type": "ID",
+              "isRequired": true,
+              "attributes": []
+            },
+            "nombreMunicipio": {
+              "name": "nombreMunicipio",
+              "isArray": false,
+              "type": "String",
+              "isRequired": true,
+              "attributes": []
+            },
+            "instituciones": {
+              "name": "instituciones",
+              "isArray": true,
+              "type": {
+                "model": "Institucion"
+              },
+              "isRequired": false,
+              "attributes": [],
+              "isArrayNullable": true,
+              "association": {
+                "connectionType": "HAS_MANY",
+                "associatedWith": [
+                  "municipioId"
+                ]
+              }
+            },
+            "createdAt": {
+              "name": "createdAt",
+              "isArray": false,
+              "type": "AWSDateTime",
+              "isRequired": false,
+              "attributes": [],
+              "isReadOnly": true
+            },
+            "updatedAt": {
+              "name": "updatedAt",
+              "isArray": false,
+              "type": "AWSDateTime",
+              "isRequired": false,
+              "attributes": [],
+              "isReadOnly": true
+            }
+          },
+          "syncable": true,
+          "pluralName": "Municipios",
+          "attributes": [
+            {
+              "type": "model",
+              "properties": {}
+            },
+            {
+              "type": "auth",
+              "properties": {
+                "rules": [
+                  {
+                    "groupClaim": "cognito:groups",
+                    "provider": "userPools",
+                    "allow": "groups",
+                    "operations": [
+                      "read"
+                    ],
+                    "groups": [
+                      "EDITORS"
+                    ]
+                  },
+                  {
+                    "groupClaim": "cognito:groups",
+                    "provider": "userPools",
+                    "allow": "groups",
+                    "operations": [
+                      "create",
+                      "update",
+                      "delete",
+                      "read"
+                    ],
+                    "groups": [
+                      "ADMINS"
+                    ]
+                  },
+                  {
+                    "allow": "public",
+                    "provider": "iam",
+                    "operations": [
+                      "read"
+                    ]
+                  }
+                ]
+              }
+            }
+          ],
+          "primaryKeyInfo": {
+            "isCustomPrimaryKey": false,
+            "primaryKeyFieldName": "id",
+            "sortKeyFieldNames": []
+          }
+        },
+        "Institucion": {
+          "name": "Institucion",
+          "fields": {
+            "id": {
+              "name": "id",
+              "isArray": false,
+              "type": "ID",
+              "isRequired": true,
+              "attributes": []
+            },
+            "nombreInstitucion": {
+              "name": "nombreInstitucion",
+              "isArray": false,
+              "type": "String",
+              "isRequired": true,
+              "attributes": []
+            },
+            "municipio": {
+              "name": "municipio",
+              "isArray": false,
+              "type": {
+                "model": "Municipio"
+              },
+              "isRequired": false,
+              "attributes": [],
+              "association": {
+                "connectionType": "BELONGS_TO",
+                "targetNames": [
+                  "municipioId"
+                ]
+              }
+            },
+            "municipioId": {
+              "name": "municipioId",
+              "isArray": false,
+              "type": "ID",
+              "isRequired": false,
+              "attributes": []
+            },
+            "capacitaciones": {
+              "name": "capacitaciones",
+              "isArray": true,
+              "type": {
+                "model": "Capacitacion"
+              },
+              "isRequired": false,
+              "attributes": [],
+              "isArrayNullable": true,
+              "association": {
+                "connectionType": "HAS_MANY",
+                "associatedWith": [
+                  "institucionId"
+                ]
+              }
+            },
+            "createdAt": {
+              "name": "createdAt",
+              "isArray": false,
+              "type": "AWSDateTime",
+              "isRequired": false,
+              "attributes": [],
+              "isReadOnly": true
+            },
+            "updatedAt": {
+              "name": "updatedAt",
+              "isArray": false,
+              "type": "AWSDateTime",
+              "isRequired": false,
+              "attributes": [],
+              "isReadOnly": true
+            }
+          },
+          "syncable": true,
+          "pluralName": "Institucions",
+          "attributes": [
+            {
+              "type": "model",
+              "properties": {}
+            },
+            {
+              "type": "auth",
+              "properties": {
+                "rules": [
+                  {
+                    "groupClaim": "cognito:groups",
+                    "provider": "userPools",
+                    "allow": "groups",
+                    "operations": [
+                      "read"
+                    ],
+                    "groups": [
+                      "EDITORS"
+                    ]
+                  },
+                  {
+                    "groupClaim": "cognito:groups",
+                    "provider": "userPools",
+                    "allow": "groups",
+                    "operations": [
+                      "create",
+                      "update",
+                      "delete",
+                      "read"
+                    ],
+                    "groups": [
+                      "ADMINS"
+                    ]
+                  },
+                  {
+                    "allow": "public",
+                    "provider": "iam",
+                    "operations": [
+                      "read"
+                    ]
+                  }
+                ]
+              }
+            }
+          ],
+          "primaryKeyInfo": {
+            "isCustomPrimaryKey": false,
+            "primaryKeyFieldName": "id",
+            "sortKeyFieldNames": []
+          }
+        },
+        "Asistente": {
+          "name": "Asistente",
+          "fields": {
+            "id": {
+              "name": "id",
+              "isArray": false,
+              "type": "ID",
+              "isRequired": true,
+              "attributes": []
+            },
+            "nombre": {
+              "name": "nombre",
+              "isArray": false,
+              "type": "String",
+              "isRequired": true,
+              "attributes": []
+            },
+            "apellido": {
+              "name": "apellido",
+              "isArray": false,
+              "type": "String",
+              "isRequired": true,
+              "attributes": []
+            },
+            "correo": {
+              "name": "correo",
+              "isArray": false,
+              "type": "String",
+              "isRequired": true,
+              "attributes": []
+            },
+            "telefono": {
+              "name": "telefono",
+              "isArray": false,
+              "type": "String",
+              "isRequired": false,
+              "attributes": []
+            },
+            "capacitacione": {
+              "name": "capacitacione",
+              "isArray": false,
+              "type": {
+                "model": "Capacitacion"
+              },
+              "isRequired": false,
+              "attributes": [],
+              "association": {
+                "connectionType": "BELONGS_TO",
+                "targetNames": [
+                  "capacitacionId"
+                ]
+              }
+            },
+            "capacitacionId": {
+              "name": "capacitacionId",
+              "isArray": false,
+              "type": "ID",
+              "isRequired": false,
+              "attributes": []
+            },
+            "ipAddress": {
+              "name": "ipAddress",
+              "isArray": false,
+              "type": "String",
+              "isRequired": false,
+              "attributes": []
+            },
+            "createdAt": {
+              "name": "createdAt",
+              "isArray": false,
+              "type": "AWSDateTime",
+              "isRequired": false,
+              "attributes": [],
+              "isReadOnly": true
+            },
+            "updatedAt": {
+              "name": "updatedAt",
+              "isArray": false,
+              "type": "AWSDateTime",
+              "isRequired": false,
+              "attributes": [],
+              "isReadOnly": true
+            }
+          },
+          "syncable": true,
+          "pluralName": "Asistentes",
+          "attributes": [
+            {
+              "type": "model",
+              "properties": {}
+            },
+            {
+              "type": "auth",
+              "properties": {
+                "rules": [
+                  {
+                    "groupClaim": "cognito:groups",
+                    "provider": "userPools",
+                    "allow": "groups",
+                    "operations": [
+                      "read",
+                      "update",
+                      "delete"
+                    ],
+                    "groups": [
+                      "ADMINS"
+                    ]
+                  },
+                  {
+                    "allow": "public",
+                    "provider": "iam",
+                    "operations": [
+                      "create"
+                    ]
+                  }
+                ]
+              }
+            }
+          ],
+          "primaryKeyInfo": {
+            "isCustomPrimaryKey": false,
+            "primaryKeyFieldName": "id",
+            "sortKeyFieldNames": []
+          }
+        },
+        "Tema": {
+          "name": "Tema",
+          "fields": {
+            "id": {
+              "name": "id",
+              "isArray": false,
+              "type": "ID",
+              "isRequired": true,
+              "attributes": []
+            },
+            "nombreTema": {
+              "name": "nombreTema",
+              "isArray": false,
+              "type": "String",
+              "isRequired": true,
+              "attributes": []
+            },
+            "descripcion": {
+              "name": "descripcion",
+              "isArray": false,
+              "type": "String",
+              "isRequired": true,
+              "attributes": []
+            },
+            "capacitaciones": {
+              "name": "capacitaciones",
+              "isArray": true,
+              "type": {
+                "model": "Capacitacion"
+              },
+              "isRequired": false,
+              "attributes": [],
+              "isArrayNullable": true,
+              "association": {
+                "connectionType": "HAS_MANY",
+                "associatedWith": [
+                  "temaId"
+                ]
+              }
+            },
+            "createdAt": {
+              "name": "createdAt",
+              "isArray": false,
+              "type": "AWSDateTime",
+              "isRequired": false,
+              "attributes": [],
+              "isReadOnly": true
+            },
+            "updatedAt": {
+              "name": "updatedAt",
+              "isArray": false,
+              "type": "AWSDateTime",
+              "isRequired": false,
+              "attributes": [],
+              "isReadOnly": true
+            }
+          },
+          "syncable": true,
+          "pluralName": "Temas",
+          "attributes": [
+            {
+              "type": "model",
+              "properties": {}
+            },
+            {
+              "type": "auth",
+              "properties": {
+                "rules": [
+                  {
+                    "groupClaim": "cognito:groups",
+                    "provider": "userPools",
+                    "allow": "groups",
+                    "operations": [
+                      "read"
+                    ],
+                    "groups": [
+                      "EDITORS"
+                    ]
+                  },
+                  {
+                    "groupClaim": "cognito:groups",
+                    "provider": "userPools",
+                    "allow": "groups",
+                    "operations": [
+                      "create",
+                      "update",
+                      "delete",
+                      "read"
+                    ],
+                    "groups": [
+                      "ADMINS"
+                    ]
+                  },
+                  {
+                    "allow": "public",
+                    "provider": "iam",
+                    "operations": [
+                      "read"
+                    ]
+                  }
+                ]
+              }
+            }
+          ],
+          "primaryKeyInfo": {
+            "isCustomPrimaryKey": false,
+            "primaryKeyFieldName": "id",
+            "sortKeyFieldNames": []
+          }
+        },
+        "Capacitacion": {
+          "name": "Capacitacion",
+          "fields": {
+            "id": {
+              "name": "id",
+              "isArray": false,
+              "type": "ID",
+              "isRequired": true,
+              "attributes": []
+            },
+            "descripcion": {
+              "name": "descripcion",
+              "isArray": false,
+              "type": "String",
+              "isRequired": true,
+              "attributes": []
+            },
+            "fechaInicio": {
+              "name": "fechaInicio",
+              "isArray": false,
+              "type": "String",
+              "isRequired": true,
+              "attributes": []
+            },
+            "fechaFin": {
+              "name": "fechaFin",
+              "isArray": false,
+              "type": "String",
+              "isRequired": false,
+              "attributes": []
+            },
+            "asistentes": {
+              "name": "asistentes",
+              "isArray": true,
+              "type": {
+                "model": "Asistente"
+              },
+              "isRequired": false,
+              "attributes": [],
+              "isArrayNullable": true,
+              "association": {
+                "connectionType": "HAS_MANY",
+                "associatedWith": [
+                  "capacitacionId"
+                ]
+              }
+            },
+            "institucion": {
+              "name": "institucion",
+              "isArray": false,
+              "type": {
+                "model": "Institucion"
+              },
+              "isRequired": false,
+              "attributes": [],
+              "association": {
+                "connectionType": "BELONGS_TO",
+                "targetNames": [
+                  "institucionId"
+                ]
+              }
+            },
+            "institucionId": {
+              "name": "institucionId",
+              "isArray": false,
+              "type": "ID",
+              "isRequired": false,
+              "attributes": []
+            },
+            "tema": {
+              "name": "tema",
+              "isArray": false,
+              "type": {
+                "model": "Tema"
+              },
+              "isRequired": false,
+              "attributes": [],
+              "association": {
+                "connectionType": "BELONGS_TO",
+                "targetNames": [
+                  "temaId"
+                ]
+              }
+            },
+            "temaId": {
+              "name": "temaId",
+              "isArray": false,
+              "type": "ID",
+              "isRequired": false,
+              "attributes": []
+            },
+            "zona": {
+              "name": "zona",
+              "isArray": false,
+              "type": {
+                "enum": "Zona"
+              },
+              "isRequired": false,
+              "attributes": []
+            },
+            "linea": {
+              "name": "linea",
+              "isArray": false,
+              "type": {
+                "enum": "Linea"
+              },
+              "isRequired": false,
+              "attributes": []
+            },
+            "poblacion": {
+              "name": "poblacion",
+              "isArray": false,
+              "type": {
+                "enum": "Poblacion"
+              },
+              "isRequired": false,
+              "attributes": []
+            },
+            "tipoIntervencion": {
+              "name": "tipoIntervencion",
+              "isArray": false,
+              "type": {
+                "enum": "TipoIntervencion"
+              },
+              "isRequired": false,
+              "attributes": []
+            },
+            "rangoEdad": {
+              "name": "rangoEdad",
+              "isArray": false,
+              "type": {
+                "enum": "RangoEdad"
+              },
+              "isRequired": false,
+              "attributes": []
+            },
+            "totalMujeres": {
+              "name": "totalMujeres",
+              "isArray": false,
+              "type": "Int",
+              "isRequired": false,
+              "attributes": []
+            },
+            "totalHombres": {
+              "name": "totalHombres",
+              "isArray": false,
+              "type": "Int",
+              "isRequired": false,
+              "attributes": []
+            },
+            "totalOtro": {
+              "name": "totalOtro",
+              "isArray": false,
+              "type": "Int",
+              "isRequired": false,
+              "attributes": []
+            },
+            "grupoPoblacional": {
+              "name": "grupoPoblacional",
+              "isArray": false,
+              "type": {
+                "enum": "GrupoPoblacional"
+              },
+              "isRequired": false,
+              "attributes": []
+            },
+            "personasGrupoPoblacional": {
+              "name": "personasGrupoPoblacional",
+              "isArray": false,
+              "type": {
+                "nonModel": "CapacitacionPersonasGrupoPoblacional"
+              },
+              "isRequired": false,
+              "attributes": []
+            },
+            "observaciones": {
+              "name": "observaciones",
+              "isArray": false,
+              "type": "String",
+              "isRequired": false,
+              "attributes": []
+            },
+            "createdAt": {
+              "name": "createdAt",
+              "isArray": false,
+              "type": "AWSDateTime",
+              "isRequired": false,
+              "attributes": [],
+              "isReadOnly": true
+            },
+            "updatedAt": {
+              "name": "updatedAt",
+              "isArray": false,
+              "type": "AWSDateTime",
+              "isRequired": false,
+              "attributes": [],
+              "isReadOnly": true
+            }
+          },
+          "syncable": true,
+          "pluralName": "Capacitacions",
+          "attributes": [
+            {
+              "type": "model",
+              "properties": {}
+            },
+            {
+              "type": "auth",
+              "properties": {
+                "rules": [
+                  {
+                    "provider": "userPools",
+                    "ownerField": "owner",
+                    "allow": "owner",
+                    "identityClaim": "cognito:username",
+                    "operations": [
+                      "create",
+                      "update",
+                      "delete",
+                      "read"
+                    ]
+                  },
+                  {
+                    "groupClaim": "cognito:groups",
+                    "provider": "userPools",
+                    "allow": "groups",
+                    "operations": [
+                      "read",
+                      "delete"
+                    ],
+                    "groups": [
+                      "ADMINS"
+                    ]
+                  },
+                  {
+                    "allow": "public",
+                    "provider": "iam",
+                    "operations": [
+                      "read"
+                    ]
+                  }
+                ]
+              }
+            }
+          ],
+          "primaryKeyInfo": {
+            "isCustomPrimaryKey": false,
+            "primaryKeyFieldName": "id",
+            "sortKeyFieldNames": []
+          }
+        },
+        "AllowedEmails": {
+          "name": "AllowedEmails",
+          "fields": {
+            "id": {
+              "name": "id",
+              "isArray": false,
+              "type": "ID",
+              "isRequired": true,
+              "attributes": []
+            },
+            "email": {
+              "name": "email",
+              "isArray": false,
+              "type": "String",
+              "isRequired": true,
+              "attributes": []
+            },
+            "createdAt": {
+              "name": "createdAt",
+              "isArray": false,
+              "type": "AWSDateTime",
+              "isRequired": false,
+              "attributes": [],
+              "isReadOnly": true
+            },
+            "updatedAt": {
+              "name": "updatedAt",
+              "isArray": false,
+              "type": "AWSDateTime",
+              "isRequired": false,
+              "attributes": [],
+              "isReadOnly": true
+            }
+          },
+          "syncable": true,
+          "pluralName": "AllowedEmails",
+          "attributes": [
+            {
+              "type": "model",
+              "properties": {}
+            },
+            {
+              "type": "auth",
+              "properties": {
+                "rules": [
+                  {
+                    "groupClaim": "cognito:groups",
+                    "provider": "userPools",
+                    "allow": "groups",
+                    "operations": [
+                      "create",
+                      "update",
+                      "delete",
+                      "read"
+                    ],
+                    "groups": [
+                      "ADMINS"
+                    ]
+                  },
+                  {
+                    "allow": "public",
+                    "provider": "iam",
+                    "operations": [
+                      "read"
+                    ]
+                  }
+                ]
+              }
+            }
+          ],
+          "primaryKeyInfo": {
+            "isCustomPrimaryKey": false,
+            "primaryKeyFieldName": "id",
+            "sortKeyFieldNames": []
+          }
+        }
+      },
+      "enums": {
+        "Zona": {
+          "name": "Zona",
+          "values": [
+            "RURAL",
+            "URBANA"
+          ]
+        },
+        "Linea": {
+          "name": "Linea",
+          "values": [
+            "EL_AMOR_PROPIO_ES_LA_CLAVE",
+            "VIDA_CON_SENTIDO",
+            "CONSTRUYENDO_RESPETO",
+            "TU_VIDA_ES_TU_ELECCION",
+            "ESCUELAS_DE_FORMACION",
+            "RECREACION",
+            "FORTALECIMIENTO_FAMILIAR"
+          ]
+        },
+        "Poblacion": {
+          "name": "Poblacion",
+          "values": [
+            "N_N_A",
+            "PADRES",
+            "DOCENTES",
+            "AUTORIDADES",
+            "N_N_A_Y_PADRES",
+            "DOCENTES_Y_AUTORIDADES",
+            "OTROS",
+            "JOVENES_SRPA",
+            "PADRES_Y_DOCENTES",
+            "N_N_A_Y_DOCENTES"
+          ]
+        },
+        "TipoIntervencion": {
+          "name": "TipoIntervencion",
+          "values": [
+            "CIUDADES",
+            "MUNICIPIOS",
+            "GESTION_CONOCIMIENTO",
+            "ENCUENTROS",
+            "PROCESOS",
+            "ESCUELA_DE_FORMACION",
+            "CENTROS_DE_INTERES",
+            "RECREACION",
+            "CINE",
+            "TEATRO"
+          ]
+        },
+        "RangoEdad": {
+          "name": "RangoEdad",
+          "values": [
+            "CERO_A_CINCO",
+            "SEIS_A_DIEZ",
+            "ONCE_A_DIECISIETE",
+            "DIECIOCHO_O_MAS"
+          ]
+        },
+        "GrupoPoblacional": {
+          "name": "GrupoPoblacional",
+          "values": [
+            "N_A",
+            "CON_DISCAPACIDAD",
+            "MIGRANTE",
+            "INDIGENA",
+            "AFRO",
+            "VICTIMA"
+          ]
+        }
+      },
+      "nonModels": {
+        "UserAttribute": {
+          "name": "UserAttribute",
+          "fields": {
+            "Name": {
+              "name": "Name",
+              "isArray": false,
+              "type": "String",
+              "isRequired": false,
+              "attributes": []
+            },
+            "Value": {
+              "name": "Value",
+              "isArray": false,
+              "type": "String",
+              "isRequired": false,
+              "attributes": []
+            }
+          }
+        },
+        "User": {
+          "name": "User",
+          "fields": {
+            "Attributes": {
+              "name": "Attributes",
+              "isArray": true,
+              "type": {
+                "nonModel": "UserAttribute"
+              },
+              "isRequired": false,
+              "attributes": [],
+              "isArrayNullable": true
+            },
+            "Enabled": {
+              "name": "Enabled",
+              "isArray": false,
+              "type": "Boolean",
+              "isRequired": false,
+              "attributes": []
+            },
+            "UserCreateDate": {
+              "name": "UserCreateDate",
+              "isArray": false,
+              "type": "AWSDateTime",
+              "isRequired": false,
+              "attributes": []
+            },
+            "UserLastModifiedDate": {
+              "name": "UserLastModifiedDate",
+              "isArray": false,
+              "type": "AWSDateTime",
+              "isRequired": false,
+              "attributes": []
+            },
+            "UserStatus": {
+              "name": "UserStatus",
+              "isArray": false,
+              "type": "String",
+              "isRequired": false,
+              "attributes": []
+            },
+            "Username": {
+              "name": "Username",
+              "isArray": false,
+              "type": "String",
+              "isRequired": false,
+              "attributes": []
+            }
+          }
+        },
+        "UsersResponse": {
+          "name": "UsersResponse",
+          "fields": {
+            "users": {
+              "name": "users",
+              "isArray": true,
+              "type": {
+                "nonModel": "User"
+              },
+              "isRequired": false,
+              "attributes": [],
+              "isArrayNullable": true
+            }
+          }
+        },
+        "SingleUserAttribute": {
+          "name": "SingleUserAttribute",
+          "fields": {
+            "Name": {
+              "name": "Name",
+              "isArray": false,
+              "type": "String",
+              "isRequired": false,
+              "attributes": []
+            },
+            "Value": {
+              "name": "Value",
+              "isArray": false,
+              "type": "String",
+              "isRequired": false,
+              "attributes": []
+            }
+          }
+        },
+        "MFAOptionsAttribute": {
+          "name": "MFAOptionsAttribute",
+          "fields": {
+            "DeliveryMedium": {
+              "name": "DeliveryMedium",
+              "isArray": false,
+              "type": "String",
+              "isRequired": false,
+              "attributes": []
+            },
+            "AttributeName": {
+              "name": "AttributeName",
+              "isArray": false,
+              "type": "String",
+              "isRequired": false,
+              "attributes": []
+            }
+          }
+        },
+        "UserInfoResponse": {
+          "name": "UserInfoResponse",
+          "fields": {
+            "Username": {
+              "name": "Username",
+              "isArray": false,
+              "type": "String",
+              "isRequired": false,
+              "attributes": []
+            },
+            "UserAttributes": {
+              "name": "UserAttributes",
+              "isArray": true,
+              "type": {
+                "nonModel": "SingleUserAttribute"
+              },
+              "isRequired": false,
+              "attributes": [],
+              "isArrayNullable": true
+            },
+            "MFAOptions": {
+              "name": "MFAOptions",
+              "isArray": true,
+              "type": {
+                "nonModel": "MFAOptionsAttribute"
+              },
+              "isRequired": false,
+              "attributes": [],
+              "isArrayNullable": true
+            },
+            "PreferredMfaSetting": {
+              "name": "PreferredMfaSetting",
+              "isArray": false,
+              "type": "String",
+              "isRequired": false,
+              "attributes": []
+            },
+            "UserMFASettingList": {
+              "name": "UserMFASettingList",
+              "isArray": true,
+              "type": "String",
+              "isRequired": false,
+              "attributes": [],
+              "isArrayNullable": true
+            }
+          }
+        },
+        "UserStateChange": {
+          "name": "UserStateChange",
+          "fields": {
+            "username": {
+              "name": "username",
+              "isArray": false,
+              "type": "String",
+              "isRequired": false,
+              "attributes": []
+            },
+            "enabled": {
+              "name": "enabled",
+              "isArray": false,
+              "type": "Boolean",
+              "isRequired": false,
+              "attributes": []
+            }
+          }
+        },
+        "CapacitacionPersonasGrupoPoblacional": {
+          "name": "CapacitacionPersonasGrupoPoblacional",
+          "fields": {
+            "discapacidad": {
+              "name": "discapacidad",
+              "isArray": false,
+              "type": "Int",
+              "isRequired": false,
+              "attributes": []
+            },
+            "migrante": {
+              "name": "migrante",
+              "isArray": false,
+              "type": "Int",
+              "isRequired": false,
+              "attributes": []
+            },
+            "indigena": {
+              "name": "indigena",
+              "isArray": false,
+              "type": "Int",
+              "isRequired": false,
+              "attributes": []
+            },
+            "afro": {
+              "name": "afro",
+              "isArray": false,
+              "type": "Int",
+              "isRequired": false,
+              "attributes": []
+            },
+            "victima": {
+              "name": "victima",
+              "isArray": false,
+              "type": "Int",
+              "isRequired": false,
+              "attributes": []
+            }
+          }
+        }
+      },
+      "queries": {
+        "listUsers": {
+          "name": "listUsers",
+          "isArray": false,
+          "type": {
+            "nonModel": "UsersResponse"
+          },
+          "isRequired": false
+        },
+        "getUserInfo": {
+          "name": "getUserInfo",
+          "isArray": false,
+          "type": {
+            "nonModel": "UserInfoResponse"
+          },
+          "isRequired": false,
+          "arguments": {
+            "accessToken": {
+              "name": "accessToken",
+              "isArray": false,
+              "type": "String",
+              "isRequired": true
+            }
+          }
+        }
+      },
+      "mutations": {
+        "addUserToGroup": {
+          "name": "addUserToGroup",
+          "isArray": false,
+          "type": "AWSJSON",
+          "isRequired": false,
+          "arguments": {
+            "userId": {
+              "name": "userId",
+              "isArray": false,
+              "type": "String",
+              "isRequired": true
+            },
+            "groupName": {
+              "name": "groupName",
+              "isArray": false,
+              "type": "String",
+              "isRequired": true
+            }
+          }
+        },
+        "activateDeactivateUser": {
+          "name": "activateDeactivateUser",
+          "isArray": false,
+          "type": "AWSJSON",
+          "isRequired": false,
+          "arguments": {
+            "username": {
+              "name": "username",
+              "isArray": false,
+              "type": "String",
+              "isRequired": true
+            },
+            "enable": {
+              "name": "enable",
+              "isArray": false,
+              "type": "Boolean",
+              "isRequired": true
+            }
+          }
+        }
+      }
+    }
+  },
+  "storage": {
+    "aws_region": "us-east-1",
+    "bucket_name": "amplify-casamenorboyaca-l-casamenorfilesbuckete67f-rfvceaoniepp",
+    "buckets": [
+      {
+        "name": "casaMenorFiles",
+        "bucket_name": "amplify-casamenorboyaca-l-casamenorfilesbuckete67f-rfvceaoniepp",
+        "aws_region": "us-east-1"
+      }
+    ]
+  },
+  "version": "1.1"
+}

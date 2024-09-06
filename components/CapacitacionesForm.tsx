@@ -1,26 +1,31 @@
 /* eslint-disable */
 import { useCapacitacionIdContext } from "./IdContext";
 import { Button, Flex, Grid, TextField, Autocomplete, Label, TextAreaField, Input, View } from "@aws-amplify/ui-react";
-import { SelectionSet, generateClient } from "aws-amplify/api";
+import { generateClient } from 'aws-amplify/data';
 import { useState, useEffect } from 'react';
-import type { Schema } from '@/amplify/data/resource';
-import { CheckboxGroup, Checkbox } from "@nextui-org/react";
 import MessagesHandler from "./MessagesHandler";
-import { on } from "events";
+import { type Schema } from '@/amplify/data/resource';
 
 //Define the options type with id and label
 type Option = {
     id: string;
     label: string;
 }
+type PersonasPorGrupo = {
+    discapacidad: number,
+    migrante: number,
+    indigena: number,
+    afro: number,
+    victima: number
+}
 
 const client = generateClient<Schema>();
 export default function CapacitacionesForm() {
     const [municipio, setMunicipio] = useState<string | null>(null);
-    const [municipios, setMunicipios] = useState<Schema['Municipio'][]>([]);
+    const [municipios, setMunicipios] = useState<Schema['Municipio']['type'][]>([]);
     const [nombreMunicipio, setNombreMunicipio] = useState<string>("");
     const [institucion, setInstitucion] = useState<string | null>(null);
-    const [instituciones, setInstituciones] = useState<Schema['Institucion'][]>([]);
+    const [instituciones, setInstituciones] = useState<Schema['Institucion']['type'][]>([]);
     const [nombreInstitucion, setNombreInstitucion] = useState<string>("")
     const [errors, setErrors] = useState({});
     //municipioOptions is an empty array of type Option
@@ -29,35 +34,54 @@ export default function CapacitacionesForm() {
     const [descripcion, setDescripcion] = useState("");
     const [fechaInicio, setFechaInicio] = useState("");
     const [fechaFin, setFechaFin] = useState("");
-    const [listaTemas, setListaTemas] = useState<Schema['Tema'][]>([]);
-    const [temas, setTemas] = useState(new Array());
+    const [listaTemas, setListaTemas] = useState(new Array<Option>());
+    const [nombreTema, setNombreTema] = useState<string>("");
+    const [zona, setZona] = useState<string | null>(null);
+    const [temaId, setTemaId] = useState<string | null>(null);
+    const [linea, setLinea] = useState<string | null>(null);
+    const [poblacion, setPoblacion] = useState<string | null>(null);
+    const [tipoIntervencion, setTipoIntervencion] = useState<string | null>(null);
+    const [rangoEdad, setRangoEdad] = useState<string | null>(null);
+    const [totalMujeres, setTotalMujeres] = useState<number | null>(null);
+    const [totalHombres, setTotalHombres] = useState<number | null>(null);
+    const [totalOtro, setTotalOtro] = useState<number | null>(null);
+    const [grupoPoblacional, setGrupoPoblacional] = useState<string | null>(null);
+    const [personasPorGrupo, setPersonasPorGrupo] = useState<PersonasPorGrupo>({ discapacidad: 0, migrante: 0, indigena: 0, afro: 0, victima: 0 });
+    const [observaciones, setObservaciones] = useState<string | null>("");
     const [temaOptions, setTemaOptions] = useState(new Array());
     const [saveResultType, setSaveResultType] = useState("");
     const [saveMessage, setSaveMessage] = useState("");
     const { capacitacionId, setCapacitacionId } = useCapacitacionIdContext();
-    const [savedTemas, setSavedTemas] = useState(new Array());
+    const zonas = client.enums.Zona.values();
+    const lineas = client.enums.Linea.values();
+    const poblaciones = client.enums.Poblacion.values();
+    const tiposIntervencion = client.enums.TipoIntervencion.values();
+    const rangosEdad = client.enums.RangoEdad.values();
+    const gruposPoblacionales = client.enums.GrupoPoblacional.values();
+    
+
 
     async function listMunicipios() {
-        const { data } = await client.models.Municipio.list();
-        setMunicipios(data);
-        let municipioOptions = data.map((municipio) => ({ id: municipio.id, label: municipio.nombreMunicipio }));
+        const { data: municipios, errors } = await client.models.Municipio.list();
+        setMunicipios(municipios);
+        let municipioOptions = municipios.map((municipio: Schema["Municipio"]["type"]) => ({ id: municipio.id, label: municipio.nombreMunicipio }));
         setMunicipioOptions(municipioOptions);
     }
 
     async function changeMunicipio(municipioSel: any) {
         setMunicipio(municipioSel);
         setNombreMunicipio(municipioSel.label);
-        setInstitucion(null);    
+        setInstitucion(null);
         const { data } = await client.models.Institucion.list({
             filter: {
-                municipioInstitucionesId: {
+                municipioId: {
                     eq: municipioSel.id
                 }
             }
         });
         if (data.length === 0) {
             return;
-        }    
+        }
         setInstituciones(data);
         let institucionOptions = data.map((institucion) => ({ id: institucion.id, label: institucion.nombreInstitucion }));
         setInstitucionOptions(institucionOptions);
@@ -68,15 +92,15 @@ export default function CapacitacionesForm() {
         if (data.length === 0) {
             return;
         }
-        setListaTemas(data);
+        setListaTemas(data.map((tema) => ({ id: tema.id, label: tema.nombreTema })));
         let temaOptions = data.map((tema) => ({ id: tema.id, label: tema.nombreTema }));
-        setTemaOptions(temaOptions);    
+        setTemaOptions(temaOptions);
         //await fetch('/api/metadata').then(response => response.json()).then(data => console.log(data));        
     }
 
     useEffect(() => {
         listMunicipios();
-        listTemas();        
+        listTemas();
     }, []);
 
     useEffect(() => {
@@ -89,41 +113,56 @@ export default function CapacitacionesForm() {
         setNombreMunicipio("");
         setInstitucion(null);
         setNombreInstitucion("");
-        setDescripcion("");  
+        setDescripcion("");
         setFechaInicio("");
         setFechaFin("");
-        setTemas([]);  
+        setNombreTema("");
+        setTemaId(null);
         setErrors({});
     };
 
     async function loadCapacitacion() {
+        // @ts-ignore
         const { data } = await client.models.Capacitacion.get(
-            { id: capacitacionId }, 
-            { selectionSet: ['descripcion', 'fechaInicio', 'fechaFin', 'institucion.id', 
-            'institucion.nombreInstitucion', 'institucion.municipio.nombreMunicipio', 'institucion.municipio.id'] });        
+            { id: capacitacionId },
+            {
+                selectionSet: ['descripcion', 'fechaInicio', 'fechaFin', 'institucion.id', 'tema.id', 'tema.nombreTema',
+                    'institucion.nombreInstitucion', 'institucion.municipio.nombreMunicipio', 'institucion.municipio.id', 
+                    'zona', 'linea', 'poblacion', 'tipoIntervencion', 'rangoEdad', 'totalMujeres', 'totalHombres', 'totalOtro',
+                    'grupoPoblacional', 'observaciones', 'personasGrupoPoblacional.discapacidad', 
+                    'personasGrupoPoblacional.migrante', 'personasGrupoPoblacional.indigena', 'personasGrupoPoblacional.afro', 'personasGrupoPoblacional.victima']
+            });
+        if (data === null) {
+            return;
+        }
         setDescripcion(data.descripcion);
         setFechaInicio(data.fechaInicio);
-        setFechaFin(data.fechaFin? data.fechaFin : "");
+        setFechaFin(data.fechaFin ? data.fechaFin : "");
         setNombreMunicipio(data.institucion.municipio.nombreMunicipio);
-        changeMunicipio({id: data.institucion.municipio.id, label: data.institucion.municipio.nombreMunicipio});
-        setInstitucion(data.institucion.id);   
-        setNombreInstitucion(data.institucion.nombreInstitucion); 
-        
-        //@ts-ignore
-        const { data: dataTemas } = await client.models.CapacitacionTema.list({
-            //@ts-ignore
-            filter: {
-                capacitacionId: {
-                    eq: capacitacionId
-                }
-            },
-            //@ts-ignore
-            selectionSet: ['id', 'temaId']
+        changeMunicipio({ id: data.institucion.municipio.id, label: data.institucion.municipio.nombreMunicipio });
+        setInstitucion(data.institucion.id);
+        setNombreInstitucion(data.institucion.nombreInstitucion);
+        setNombreTema(data.tema.nombreTema);
+        setTemaId(data.tema.id);
+        setZona(data.zona);
+        setLinea(data.linea);
+        setPoblacion(data.poblacion);
+        setTipoIntervencion(data.tipoIntervencion);
+        setRangoEdad(data.rangoEdad);
+        setTotalMujeres(data.totalMujeres);
+        setTotalHombres(data.totalHombres);
+        setTotalOtro(data.totalOtro);
+        setGrupoPoblacional(data.grupoPoblacional);
+        setPersonasPorGrupo({
+            discapacidad: data.personasGrupoPoblacional?.discapacidad || 0, 
+            migrante: data.personasGrupoPoblacional?.migrante || 0, 
+            indigena: data.personasGrupoPoblacional?.indigena || 0,
+            afro: data.personasGrupoPoblacional?.afro || 0,
+            victima: data.personasGrupoPoblacional?.victima || 0
         });
-        setTemas(dataTemas.map((tema: any) => tema.temaId));   
-        setSavedTemas(dataTemas.map((tema: any) => tema.id)); 
+        setObservaciones(data.observaciones);        
     }
-//#region render
+    //#region render
     return (
         <Grid
             as="form"
@@ -132,14 +171,13 @@ export default function CapacitacionesForm() {
             padding="20px"
             onSubmit={async (event) => {
                 event.preventDefault();
-                console.log("Temas: ", temas);
                 setSaveResultType("");
                 setSaveMessage("");
-                if (institucion === null || municipio === null || descripcion === "" || fechaInicio === "" || temas.length === 0) {                
+                if (institucion === null || municipio === null || descripcion === "" || fechaInicio === "" || temaId === null || zona === null || linea === null || poblacion === null || tipoIntervencion === null || rangoEdad === null || grupoPoblacional === null) {
                     setSaveResultType("error");
-                    setSaveMessage("Todos los campos son requeridos");
+                    setSaveMessage("Tiene que llenar todos los campos obligatorios");
                     return;
-                }                        
+                }
                 try {
                     if (capacitacionId !== "") {
                         await client.models.Capacitacion.update({
@@ -147,37 +185,50 @@ export default function CapacitacionesForm() {
                             descripcion: descripcion,
                             fechaInicio: fechaInicio,
                             fechaFin: fechaFin,
-                            institucion: instituciones.find((i) => i.id === institucion),
+                            institucionId: institucion,
+                            temaId: temaId,
+                            zona: client.enums.Zona.values().find((z) => z === zona),
+                            linea: client.enums.Linea.values().find((l) => l === linea),
+                            poblacion: client.enums.Poblacion.values().find((p) => p === poblacion),
+                            tipoIntervencion: client.enums.TipoIntervencion.values().find((t) => t === tipoIntervencion),
+                            rangoEdad: client.enums.RangoEdad.values().find((r) => r === rangoEdad),
+                            totalMujeres: totalMujeres,
+                            totalHombres: totalHombres,
+                            totalOtro: totalOtro,
+                            grupoPoblacional: client.enums.GrupoPoblacional.values().find((g) => g === grupoPoblacional),
+                            personasGrupoPoblacional: {
+                                discapacidad: personasPorGrupo.discapacidad,
+                                migrante: personasPorGrupo.migrante,
+                                indigena: personasPorGrupo.indigena,
+                                afro: personasPorGrupo.afro,
+                                victima: personasPorGrupo.victima
+                            },
+                            observaciones: observaciones
                         });
-                        savedTemas.forEach(async (tema) => {
-                            await client.models.CapacitacionTema.delete({id: tema});                            
-                        });
-                        console.log("Temas: ", temas);
-                        //console.log("Lista Temas: ", listaTemas.filter((t) => temas.includes(t.id)));
-                        temas.forEach(async (tema) => {
-                            await client.models.CapacitacionTema.create({
-                                capacitacion: {id: capacitacionId},
-                                tema: {id: tema}
-                            });
-                        });                                          
-                        setSaveMessage("Capacitación actualizada correctamente");                    
-                    }else{
-                        const {data: capacitacion} = await client.models.Capacitacion.create({
+                        setSaveMessage("Capacitación actualizada correctamente");
+                    } else {
+                        const { data: capacitacion } = await client.models.Capacitacion.create({
                             descripcion: descripcion,
                             fechaInicio: fechaInicio,
                             fechaFin: fechaFin,
-                            institucion: instituciones.find((i) => i.id === institucion),
+                            institucionId: institucion,
+                            temaId: temaId,
+                            zona: client.enums.Zona.values().find((z) => z === zona),
+                            linea: client.enums.Linea.values().find((l) => l === linea),
+                            poblacion: client.enums.Poblacion.values().find((p) => p === poblacion),
+                            tipoIntervencion: client.enums.TipoIntervencion.values().find((t) => t === tipoIntervencion),
+                            rangoEdad: client.enums.RangoEdad.values().find((r) => r === rangoEdad),
+                            totalMujeres: totalMujeres,
+                            totalHombres: totalHombres,
+                            totalOtro: totalOtro,
+                            grupoPoblacional: client.enums.GrupoPoblacional.values().find((g) => g === grupoPoblacional),
+                            personasGrupoPoblacional: personasPorGrupo,
+                            observaciones: observaciones
                         });
-                        temas.forEach(async (tema) => {
-                            await client.models.CapacitacionTema.create({
-                                capacitacion: {id: capacitacion.id},
-                                tema: {id: tema}
-                            });
-                        });                                              
                         setSaveMessage("Capacitación creada correctamente");
-                    }                   
+                    }
                     resetStateValues();
-                    setSaveResultType("success");                    
+                    setSaveResultType("success");
                 } catch (err: any) {
                     console.error(err.toString());
                     setSaveResultType("error");
@@ -196,7 +247,7 @@ export default function CapacitacionesForm() {
                     options={municipioOptions}
                     onClear={() => {
                         setInstitucion(null);
-                        setNombreInstitucion("");                    
+                        setNombreInstitucion("");
                         setMunicipio(null);
                         setNombreMunicipio("");
                     }}
@@ -209,7 +260,7 @@ export default function CapacitacionesForm() {
                     }}
                     menuSlots={{
                         Empty: <View>No se encontraron resultados</View>,
-                      }}
+                    }}
                 />
             </Flex>
             <Flex direction="column" gap="small">
@@ -220,9 +271,9 @@ export default function CapacitacionesForm() {
                     placeholder="Seleccione la institución donde se realizará la capacitación"
                     value={nombreInstitucion}
                     options={institucionOptions}
-                    onSelect={(e) => {                    
-                        setInstitucion(e.id);    
-                        setNombreInstitucion(e.label);                
+                    onSelect={(e) => {
+                        setInstitucion(e.id);
+                        setNombreInstitucion(e.label);
                     }}
                     onClear={() => {
                         setInstitucion(null);
@@ -234,7 +285,7 @@ export default function CapacitacionesForm() {
                     }}
                     menuSlots={{
                         Empty: <View>No se encontraron resultados</View>,
-                      }}
+                    }}
                 />
             </Flex>
             <TextAreaField
@@ -251,7 +302,7 @@ export default function CapacitacionesForm() {
             <Flex direction="row">
                 <Flex direction="column" gap="small">
                     <Label htmlFor="fechaInicio">Fecha de inicio</Label>
-                    <Input                    
+                    <Input
                         isRequired={true}
                         isReadOnly={false}
                         type="datetime-local"
@@ -276,19 +327,239 @@ export default function CapacitacionesForm() {
                     />
                 </Flex>
             </Flex>
-            <Flex direction="column">
-                <CheckboxGroup
-                    label="Seleccione los temas de la capacitación"
-                    color="warning"
-                    value={temas}
-                    onValueChange={setTemas}
-                >
-                   {temaOptions.map((tema) => (
-                        <Checkbox key={tema.id} value={tema.id}>{tema.label}</Checkbox>
-                    ))}
-                   
-                </CheckboxGroup>                
+            <Flex direction="column" gap="small">
+                <Label htmlFor="tema">Seleccione el tema principal de la capacitación</Label>
+                <Autocomplete
+                    required
+                    label="Tema principal"
+                    placeholder="Seleccione el tema principal de la capacitación"
+                    value={nombreTema}
+                    options={listaTemas}
+                    onSelect={(e) => {
+                        setTemaId(e.id);
+                        setNombreTema(e.label);
+                    }}
+                    onClear={() => {
+                        setTemaId(null);
+                        setNombreTema("");
+                    }}
+                    onChange={(e) => {
+                        let { value } = e.target;
+                        setNombreTema(value);
+                    }}
+                    menuSlots={{
+                        Empty: <View>No se encontraron resultados</View>,
+                    }}
+                />
             </Flex>
+            <Flex direction="column" gap="small">
+                <Label htmlFor="zona">Zona</Label>
+                <Autocomplete
+                    required
+                    label="Zona"
+                    placeholder="Seleccione la zona donde se realizará la capacitación"
+                    value={zona || ""}
+                    options={zonas.map((zona) => ({ id: zona, label: zona }))}
+                    onSelect={(e) => {
+                        setZona(e.id);                        
+                    }}
+                    onClear={() => {
+                        setZona(null);
+                    }}
+                    onChange={(e) => {
+                        let { value } = e.target;
+                        setZona(value);
+                    }}
+                    menuSlots={{
+                        Empty: <View>No se encontraron resultados</View>,
+                    }}
+                />
+            </Flex>
+            <Flex direction="column" gap="small">
+                <Label htmlFor="linea">Linea</Label>
+                <Autocomplete
+                    required
+                    label="Linea"
+                    placeholder="Seleccione la linea de la capacitación"
+                    value={linea || ""}
+                    options={lineas.map((linea) => ({ id: linea, label: linea }))}
+                    onSelect={(e) => {
+                        setLinea(e.id);
+                    }}
+                    onClear={() => {
+                        setLinea(null);
+                    }}
+                    onChange={(e) => {
+                        let { value } = e.target;
+                        setLinea(value);
+                    }}
+                    menuSlots={{
+                        Empty: <View>No se encontraron resultados</View>,
+                    }}
+                />
+            </Flex>
+            <Flex direction="column" gap="small">
+                <Label htmlFor="poblacion">Población</Label>
+                <Autocomplete
+                    required
+                    label="Población"
+                    placeholder="Seleccione la población objetivo de la capacitación"
+                    value={poblacion || ""}
+                    options={poblaciones.map((poblacion) => ({ id: poblacion, label: poblacion }))}
+                    onSelect={(e) => {
+                        setPoblacion(e.id);
+                    }}
+                    onClear={() => {
+                        setPoblacion(null);
+                    }}
+                    onChange={(e) => {
+                        let { value } = e.target;
+                        setPoblacion(value);
+                    }}
+                    menuSlots={{
+                        Empty: <View>No se encontraron resultados</View>,
+                    }}
+                />
+            </Flex>
+            <Flex direction="column" gap="small">
+                <Label htmlFor="tipoIntervencion">Tipo de intervención</Label>
+                <Autocomplete
+                    required
+                    label="Tipo de intervención"
+                    placeholder="Seleccione el tipo de intervención"
+                    value={tipoIntervencion || ""}
+                    options={tiposIntervencion.map((tipoIntervencion) => ({ id: tipoIntervencion, label: tipoIntervencion }))}
+                    onSelect={(e) => {
+                        setTipoIntervencion(e.id);
+                    }}
+                    onClear={() => {
+                        setTipoIntervencion(null);
+                    }}
+                    onChange={(e) => {
+                        let { value } = e.target;
+                        setTipoIntervencion(value);
+                    }}
+                    menuSlots={{
+                        Empty: <View>No se encontraron resultados</View>,
+                    }}
+                />
+            </Flex>
+            <Flex direction="column" gap="small">
+                <Label htmlFor="rangoEdad">Rango de edad</Label>
+                <Autocomplete
+                    required
+                    label="Rango de edad"
+                    placeholder="Seleccione el rango de edad"
+                    value={rangoEdad || ""}
+                    options={rangosEdad.map((rangoEdad) => ({ id: rangoEdad, label: rangoEdad }))}
+                    onSelect={(e) => {
+                        setRangoEdad(e.id);
+                    }}
+                    onClear={() => {
+                        setRangoEdad(null);
+                    }}
+                    onChange={(e) => {
+                        let { value } = e.target;
+                        setRangoEdad(value);
+                    }}
+                    menuSlots={{
+                        Empty: <View>No se encontraron resultados</View>,
+                    }}
+                />
+            </Flex>
+
+            <Flex direction="column" gap="small">
+                <Label htmlFor="totalMujeres">Total de mujeres</Label>
+                <Input
+                    type="number"
+                    value={totalMujeres || ""}
+                    onChange={(e) => {
+                        let { value } = e.target;
+                        setTotalMujeres(parseInt(value));
+                    }}
+                />
+            </Flex>
+
+            <Flex direction="column" gap="small">
+                <Label htmlFor="totalHombres">Total de hombres</Label>
+                <Input
+                    type="number"
+                    value={totalHombres || ""}
+                    onChange={(e) => {
+                        let { value } = e.target;
+                        setTotalHombres(parseInt(value));
+                    }}
+                />
+            </Flex>
+
+            <Flex direction="column" gap="small">
+                <Label htmlFor="totalOtro">Total de otro</Label>
+                <Input
+                    type="number"
+                    value={totalOtro || ""}
+                    onChange={(e) => {
+                        let { value } = e.target;
+                        setTotalOtro(parseInt(value));
+                    }}
+                />
+            </Flex>
+
+            <Flex direction="column" gap="small">
+                <Label htmlFor="grupoPoblacional">Grupo poblacional</Label>
+                <Autocomplete
+                    required
+                    label="Grupo poblacional"
+                    placeholder="Seleccione el grupo poblacional"
+                    value={grupoPoblacional || ""}
+                    options={gruposPoblacionales.map((grupoPoblacional) => ({ id: grupoPoblacional, label: grupoPoblacional }))}
+                    onSelect={(e) => {
+                        setGrupoPoblacional(e.id);
+                    }}
+                    onClear={() => {
+                        setGrupoPoblacional(null);
+                    }}
+                    onChange={(e) => {
+                        let { value } = e.target;
+                        setGrupoPoblacional(value);
+                    }}
+                    menuSlots={{
+                        Empty: <View>No se encontraron resultados</View>,
+                    }}
+                />
+            </Flex>
+            <Flex direction="column">
+                <Label htmlFor="personasPorGrupo">Personas por grupo</Label>
+                {Object.entries(personasPorGrupo).map(([key, value]: [string, number]) => {
+                    return (
+                        <Flex direction="row" gap="small">
+                            <Label htmlFor={key}>{key.charAt(0).toUpperCase() + key.slice(1)}</Label>
+                            <Input
+                            width={100}
+                                type="number"
+                                value={value}
+                                onChange={(e) => {
+                                    let { value } = e.target;
+                                    setPersonasPorGrupo((prevState) => ({ ...prevState, [key]: parseInt(value) }));
+                                }}
+                            />
+                        </Flex>
+                    );
+                }
+                )}
+            </Flex>
+            <Flex direction="column" gap="small">            
+                <TextAreaField
+                    label="Observaciones"
+                    descriptiveText="Complete este campo si tiene alguna observación adicional"             
+                    value={observaciones || ""}
+                    onChange={(e) => {
+                        let { value } = e.target;
+                        setObservaciones(value);
+                    }}
+                    rows={3}
+                />
+            </Flex>            
+            
             <Flex
                 justifyContent="space-between"
             >

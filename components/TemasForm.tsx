@@ -44,8 +44,10 @@ export default function TemasForm() {
 
   async function loadTema() {
     const { data } = await client.models.Tema.get({ id: temaId }, { selectionSet: ['nombreTema', 'descripcion'] });
-    setNombreTema(data.nombreTema);
-    setDescripcion(data.descripcion);
+    if (data) {
+      setNombreTema(data.nombreTema);
+      setDescripcion(data.descripcion);
+    }
   }
 
   const uploadFiles = async (idTema: string) => {
@@ -121,8 +123,12 @@ export default function TemasForm() {
               nombreTema: nombreTema.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase(),  
               descripcion: descripcion,                                  
             });      
-            uploadFiles(tema.id);
-            setSaveMessage("Tema creado correctamente");
+            if (tema) {
+              uploadFiles(tema.id);
+              setSaveMessage("Tema creado correctamente");
+            }else{
+              setSaveMessage("Error al crear el tema");
+            }
           }       
           setSaveResultType("success");          
           resetStateValues();          

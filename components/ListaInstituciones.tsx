@@ -7,9 +7,9 @@ import { useState, useEffect } from 'react';
 import type { Schema } from '@/amplify/data/resource';
 import type { SelectionSet } from 'aws-amplify/data';
 import { Pagination } from '@aws-amplify/ui-react';
-import { EditIcon } from "./EditIcon";
-import { DeleteIcon } from "./DeleteIcon";
-import { EyeIcon } from "./EyeIcon";
+import { FaEye } from "react-icons/fa";
+import { FaRegEdit } from "react-icons/fa";
+import { AiTwotoneDelete } from "react-icons/ai";
 import { SearchField } from '@aws-amplify/ui-react';
 
 const client = generateClient<Schema>();
@@ -33,7 +33,7 @@ const columns = [
   },
 ];
 const selectionSet = ['id', 'nombreInstitucion', 'createdAt', 'municipio.nombreMunicipio'] as const;
-type InstitucionMunicipios = SelectionSet<Schema['Institucion'], typeof selectionSet>;
+type InstitucionMunicipios = SelectionSet<Schema['Institucion']['type'], typeof selectionSet>;
 type OptionsType = {
   limit: number;
   nextToken: string | null;
@@ -112,19 +112,19 @@ export default function ListaInstituciones() {
           <div className="relative flex items-center gap-2">
             <Tooltip content="Detalles">
               <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                <EyeIcon />
+                <FaEye />
               </span>
             </Tooltip>
             <Tooltip content="Editar">
               <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                <EditIcon onClick={() => {
+                <FaRegEdit onClick={() => {
                   setInstitucionId(institucion.id);
                 }} />
               </span>
             </Tooltip>
             <Tooltip color="danger" content="Borrar">
               <span className="text-lg text-danger cursor-pointer active:opacity-50">
-                <DeleteIcon onClick={() => handleDeleteInstitucion(institucion.id)} />
+                <AiTwotoneDelete onClick={() => handleDeleteInstitucion(institucion.id)} />
               </span>
             </Tooltip>
           </div>
@@ -138,7 +138,7 @@ export default function ListaInstituciones() {
     //Search if the institucion has any capacitaciones
     client.models.Capacitacion.list({
       filter: {
-        institucionCapacitacionesId: {
+        institucionId: {
           eq: id
         }
       }

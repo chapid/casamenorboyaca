@@ -11,7 +11,7 @@ import MessagesHandler from "./MessagesHandler";
 const client = generateClient<Schema>();
 export default function InstitucionesForm() {
   const [municipio, setMunicipio] = React.useState("");
-  const [municipios, setMunicipios] = useState<Schema['Municipio'][]>([]);
+  const [municipios, setMunicipios] = useState<Schema['Municipio']['type'][]>([]);
   const [nombreMunicipio, setNombreMunicipio] = React.useState("");
   const [nombreInstitucion, setNombreInstitucion] = React.useState("");
   const [errors, setErrors] = React.useState({});
@@ -45,9 +45,11 @@ export default function InstitucionesForm() {
 
   async function loadInstitucion() {
     const { data } = await client.models.Institucion.get({ id: institucionId }, { selectionSet: ['nombreInstitucion', 'municipio.id', 'municipio.nombreMunicipio'] });
-    setNombreInstitucion(data.nombreInstitucion);
-    setMunicipio(data.municipio.id);
-    setNombreMunicipio(data.municipio.nombreMunicipio);
+    if (data) {
+      setNombreInstitucion(data.nombreInstitucion);
+      setMunicipio(data.municipio.id);
+      setNombreMunicipio(data.municipio.nombreMunicipio);
+    }
   }
   
   return (
@@ -67,14 +69,14 @@ export default function InstitucionesForm() {
           if (institucionId === "") {
             await client.models.Institucion.create({                        
               nombreInstitucion: nombreInstitucion.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase(),  
-              municipio: municipios.find((m) => m.id === municipio),                                  
+              municipioId: municipio,                                  
             });
             setSaveMessage("Institución creada correctamente");
           } else {
             await client.models.Institucion.update({                        
               id: institucionId,
               nombreInstitucion: nombreInstitucion.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase(),  
-              municipio: municipios.find((m) => m.id === municipio),                                  
+              municipioId: municipio,                                  
             });            
             setSaveMessage("Institución actualizada correctamente"); 
           }
@@ -93,7 +95,7 @@ export default function InstitucionesForm() {
         placeholder="Seleccione un municipio"
         value={nombreMunicipio}      
         options={municipioOptions}
-        onSelect={(e) => {        
+        onSelect={(e) => {
           setMunicipio(e.id);
           setNombreMunicipio(e.label);
         }}   
@@ -112,7 +114,7 @@ export default function InstitucionesForm() {
           let { value } = e.target;          
           setNombreInstitucion(value);
         }}              
-      ></TextField>
+      />
       <Flex
         justifyContent="space-between"        
       >
