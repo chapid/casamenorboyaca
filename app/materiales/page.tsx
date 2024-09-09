@@ -159,20 +159,20 @@ function Materiales() {
       <Card >
         <CardBody>
         
-          <div className='flex w-full'>
+          <div className='grid grid-cols-4 gap-4 w-full'>
           
-            <div className='w-2/3 bg-gradient-to-tr from-amber-500 via-violet-600 to-indigo-600 rounded-md text-white'>
+            <div className='sm:col-span-3 col-span-4 bg-gradient-to-tr from-amber-500 via-violet-600 to-indigo-600 rounded-md text-white'>
             <h2 className={`text-2xl ${assistantName ? 'visible':'hidden'} content-center py-2 text-center`}>Gracias por tu registro {assistantName}!</h2>
-              <div className='grid sm:grid-cols-4 grid-cols-2 gap-4 justify-center items-center h-3/4'>
+              <div className='grid sm:grid-cols-4 grid-cols-1 gap-4 justify-center items-center h-3/4'>
               {temas.map((tema, index) => (
                 <div key={index} className='flex justify-center items-center'>                  
                   <div className='border-2 border-white-500 p-2 rounded-lg h-20'>
                     <h5>{tema.nombreTema}</h5>
                     <Button color="default" variant="ghost" endContent={<FaDownload />} onClick={() => {
-                      if (assistantName === '') {
-                        alert('Por favor completa el formulario para poder descargar los materiales');
-                        return;
-                      }
+                      //if (assistantName === '') {
+                      //  alert('Por favor completa el formulario para poder descargar los materiales');
+                      //  return;
+                      //}
                       getUrl(tema.id);
                       if (pdfUrl){
                         console.log('pdfUrl', pdfUrl);
@@ -186,7 +186,7 @@ function Materiales() {
               ))}
               </div>
             </div>
-            <div className='w-1/3 px-2'>
+            <div className='sm:col-span-1 col-span-4'>
               <h2 className='text-2xl'>¡Queremos conocerte!</h2>
               <p>Para poder brindarte una mejor experiencia, por favor completa el siguiente formulario.</p>
               <RegistroAsistenciaForm setAssistantName={setAssistantName} />
