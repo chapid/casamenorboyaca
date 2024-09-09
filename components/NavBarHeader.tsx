@@ -20,8 +20,8 @@ async function fetchUserAttributes() {
     return null;
 }
 const menuItems = {
-  'all': ['Nuestras actividades', 'Materiales y herramientas'],
-  'admin': ['Gestión de datos'],
+  'all': {'Nuestras actividades':'/capacitaciones', 'Materiales y herramientas':'/materiales'},
+  'admin': {'Gestión de datos': '/gestion'},
 }
 
 export default function NavBarHeader() {
@@ -112,17 +112,17 @@ export default function NavBarHeader() {
       {user ? <Button onClick={fullLogout}>Salir</Button> : <Link color="foreground" href="/signin">Entrar</Link>}
     </NavbarContent>
     <NavbarMenu>
-        {(user? menuItems.admin:menuItems.all).map((item, index) => (
-          <NavbarMenuItem key={`${item}-${index}`}>
+        {Object.entries(user? menuItems.admin:menuItems.all).map((item, index) => (
+          <NavbarMenuItem key={`${item[0]}-${index}`}>
             <Link
               color={
                 "primary"
               }
               className="w-full"
-              href="#"
+              href={item[1]}
               size="lg"
             >
-              {item}
+              {item[0]}
             </Link>
           </NavbarMenuItem>
         ))}
