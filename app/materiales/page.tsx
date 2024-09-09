@@ -169,10 +169,10 @@ function Materiales() {
                   <div className='border-2 border-white-500 p-2 rounded-lg h-20'>
                     <h5>{tema.nombreTema}</h5>
                     <Button color="default" variant="ghost" endContent={<FaDownload />} onClick={() => {
-                      //if (assistantName === '') {
-                      //  alert('Por favor completa el formulario para poder descargar los materiales');
-                      //  return;
-                      //}
+                      if (assistantName === '') {
+                        alert('Por favor completa el formulario para poder descargar los materiales');
+                        return;
+                      }
                       getUrl(tema.id);
                       if (pdfUrl){
                         console.log('pdfUrl', pdfUrl);
