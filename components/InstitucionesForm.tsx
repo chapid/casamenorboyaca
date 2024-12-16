@@ -73,11 +73,11 @@ export default function InstitucionesForm() {
             });
             setSaveMessage("Institución creada correctamente");
           } else {
-            await client.models.Institucion.update({                        
+            await client.models.Institucion.update({
               id: institucionId,
               nombreInstitucion: nombreInstitucion.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase(),  
               municipioId: municipio,                                  
-            });            
+            });
             setSaveMessage("Institución actualizada correctamente"); 
           }
           resetStateValues();
