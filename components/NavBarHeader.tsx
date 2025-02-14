@@ -1,12 +1,21 @@
 /* eslint-disable */
 import React, { useEffect } from "react";
-import { Navbar, NavbarBrand, NavbarContent, NavbarItem, Link, Button, User, NavbarMenuToggle, NavbarMenu, NavbarMenuItem } from "@nextui-org/react";
+import { Navbar, NavbarBrand, NavbarContent, NavbarItem, Link, Button, 
+  User, NavbarMenuToggle, NavbarMenu, NavbarMenuItem, menu, 
+  Input,
+  DropdownItem,
+  DropdownTrigger,
+  Dropdown,
+  DropdownMenu} from "@nextui-org/react";
 import { useSelectedLayoutSegment } from 'next/navigation'
 import { useAuthenticator } from '@aws-amplify/ui-react';
 import { AuthUser, getCurrentUser, signOut } from 'aws-amplify/auth';
 import { fetchAuthSession } from '@aws-amplify/auth';
 import { generateClient } from 'aws-amplify/data';
 import { type Schema } from '@/amplify/data/resource';
+import { FaSearch } from "react-icons/fa";
+import { FaUserCircle } from "react-icons/fa";
+import Image from 'next/image';
 
 async function fetchUserAttributes() {
   const client = generateClient<Schema>();
@@ -19,9 +28,15 @@ async function fetchUserAttributes() {
   } else
     return null;
 }
-const menuItems = {
-  'all': {'Nuestras actividades':'/capacitaciones', 'Materiales y herramientas':'/materiales'},
-  'admin': {'Gestión de datos': '/gestion'},
+
+const adminMenuItems = {
+  'Gestión de datos': '/gestion',  
+}
+
+const allMenuItems = {
+  'Nosotros': '/',
+  'Programas y estrategias': '/capacitaciones',
+  'Participa': '/materiales',
 }
 
 export default function NavBarHeader() {
@@ -31,6 +46,7 @@ export default function NavBarHeader() {
   const [user, setUser] = React.useState<AuthUser | null>(null);
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   async function getUser() {
+    
     try {
       const { username, userId, signInDetails } = await getCurrentUser();
       setUser({ username, userId, signInDetails });
@@ -39,10 +55,11 @@ export default function NavBarHeader() {
       console.log(err);
       setUser(null);
     }
+    
   }
 
   useEffect(() => {
-    console.log('authStatus', authStatus);
+    
     if (authStatus !== 'authenticated') {
       return;
     }
@@ -61,43 +78,81 @@ export default function NavBarHeader() {
     };
   }, [authStatus]);
 
-  function fullLogout() {
-    signOut();
+  async function fullLogout() {
+    await signOut();
     setUser(null);
     window.location.href = "/";
   }
-  return <Navbar shouldHideOnScroll onMenuOpenChange={setIsMenuOpen}>
-    <NavbarContent>
+  return (
+    <Navbar
+      classNames={{
+        item: [
+          "flex",
+          "relative",
+          "h-full",
+          "w-full",
+          "items-center",
+          "data-[active=true]:after:content-['']",
+          "data-[active=true]:after:absolute",
+          "data-[active=true]:after:bottom-0",
+          "data-[active=true]:after:left-0",
+          "data-[active=true]:after:right-0",
+          "data-[active=true]:after:h-[2px]",
+          "data-[active=true]:after:rounded-[2px]",
+          "data-[active=true]:after:bg-primary",
+        ],
+      }}
+      height={16}
+      maxWidth="full"
+      onMenuOpenChange={setIsMenuOpen}
+      className="px-0"
+    >
+      <NavbarBrand >
       <NavbarMenuToggle
-        aria-label={isMenuOpen ? "Cerrar menu" : "Abrir menu"}
-        className="sm:hidden"
-      />
-      <NavbarBrand>
-        <Link color="foreground" className={(segment == null || segment == "") ? "text-white bg-blue-600 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-3 mb-3" : "text-black"} href="/">
-          <p className="font-bold text-inherit">NOSOTROS</p>
-        </Link>
-
+          aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+          className="sm:hidden"
+        />
+      <Image src="/logo.png" alt="Logo" width={150} height={50} />
       </NavbarBrand>
-    </NavbarContent>
+      <NavbarContent className="hidden sm:flex gap-4" justify="start">
+      
+      {user ? Object.entries(adminMenuItems).map(([key, value], index) => (
+        <NavbarItem key={`${key}-${index}`} isActive={value === '/' ? segment === null : segment === value.replace('/', '')}>
+          <Link color="foreground" href={value} >
+            {key}
+          </Link>
+        </NavbarItem>
+      )) : Object.entries(allMenuItems).map(([key, value], index) => (
+        <NavbarItem key={`${key}-${index}`} isActive={value === '/' ? segment === null : segment === value.replace('/', '')}>
+          <Link color="foreground" href={value}>
+            {key}
+          </Link>
+        </NavbarItem>
+      ))}        
+        
+        
+      </NavbarContent>
+      
+      <NavbarContent as="div" className="items-center" justify="center" >
+        <Input
+          classNames={{
+            base: "max-w-full sm:max-w-[20rem] h-10",
+            mainWrapper: "h-full",
+            input: "text-small",
+            inputWrapper:
+              "h-full font-normal text-default-500 bg-default-400/20 dark:bg-default-500/20",
+          }}
+          placeholder="Buscar..."
+          size="md"
+          startContent={<FaSearch size={18} />}
+          type="search"
+        />
+      </NavbarContent>
+      <NavbarContent className="hidden sm:flex gap-4" >
+          
 
-    <NavbarContent className="hidden sm:flex gap-4" justify="center">
-      <NavbarItem>
-        <Link className={segment == 'capacitaciones' ? "text-white bg-blue-600 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-extrabold rounded-lg text-sm px-5 py-2.5 text-center mr-3 mb-3" : "text-black"} href="/capacitaciones">
-          Nuestras actividades
-        </Link>
-      </NavbarItem>
-      <NavbarItem className={user ? 'hidden' : 'visible'}>
-        <Link href="/materiales" className={segment == 'materiales' ? "text-white bg-blue-600 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-extrabold rounded-lg text-sm px-5 py-2.5 text-center mr-3 mb-3" : "text-black"}>
-          Materiales y herramientas
-        </Link>
-      </NavbarItem>
       <NavbarItem className={user ? 'visible' : 'hidden'}>
-        <Link color="foreground" href="/gestion" className={segment == 'gestion' ? "text-white bg-blue-600 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-extrabold rounded-lg text-sm px-5 py-2.5 text-center mr-3 mb-3" : "text-black"}>
-          Gestión de datos
-        </Link>
-      </NavbarItem>
-      <NavbarItem className={user ? 'visible' : 'hidden'}>
-        {userAttributes ? userAttributes.email : null}
+        {userAttributes ? userAttributes.email : null}  
       </NavbarItem>
       {user?.signInDetails?.loginId ?
         <NavbarItem>
@@ -109,10 +164,11 @@ export default function NavBarHeader() {
     </NavbarContent>
     <NavbarContent justify="end">
 
-      {user ? <Button onClick={fullLogout}>Salir</Button> : <Link color="foreground" href="/signin">Entrar</Link>}
+      {user ? <Button onClick={fullLogout} radius="full" color="success" className="bg-green-500 text-white pl-20 py-2 rounded-r-lg -mx-8 text-2xl" >Salir</Button> : <Button size="lg" className="bg-green-500 text-white pl-20 py-2 rounded-r-lg -mx-8 text-2xl" radius="full" color="success" onPress={() => window.location.href = "/signin"}  startContent={<FaUserCircle />}>Entrar</Button>}
     </NavbarContent>
+    
     <NavbarMenu>
-        {Object.entries(user? menuItems.admin:menuItems.all).map((item, index) => (
+        {Object.entries(user? adminMenuItems:allMenuItems).map((item, index) => (
           <NavbarMenuItem key={`${item[0]}-${index}`}>
             <Link
               color={
@@ -127,7 +183,9 @@ export default function NavBarHeader() {
           </NavbarMenuItem>
         ))}
       </NavbarMenu>
-  </Navbar>;
+      
+    </Navbar>
+  )
 };
 
 

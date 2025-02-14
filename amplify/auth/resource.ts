@@ -12,7 +12,9 @@ import { getUserInfo } from '../data/get-user-info/resource';
 export const auth = defineAuth({
   loginWith: {
     email: {
-      verificationEmailSubject: 'Bienvenido! Verifica tu email!'
+      verificationEmailStyle: "CODE",
+      verificationEmailSubject: 'Bienvenido! Verifica tu email!',
+      verificationEmailBody: (createCode) => `Use este codigo para confirmar su cuenta: ${createCode()}`,
     },    
   },
     

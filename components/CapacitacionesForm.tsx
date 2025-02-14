@@ -36,18 +36,18 @@ export default function CapacitacionesForm() {
     const [fechaFin, setFechaFin] = useState("");
     const [listaTemas, setListaTemas] = useState(new Array<Option>());
     const [nombreTema, setNombreTema] = useState<string>("");
-    const [zona, setZona] = useState<string | null>(null);
-    const [temaId, setTemaId] = useState<string | null>(null);
-    const [linea, setLinea] = useState<string | null>(null);
-    const [poblacion, setPoblacion] = useState<string | null>(null);
-    const [tipoIntervencion, setTipoIntervencion] = useState<string | null>(null);
+    const [zona, setZona] = useState<string>("");
+    const [temaId, setTemaId] = useState<string>("");
+    const [linea, setLinea] = useState<string>("");
+    const [poblacion, setPoblacion] = useState<string>("");
+    const [tipoIntervencion, setTipoIntervencion] = useState<string>("");
     const [rangoEdad, setRangoEdad] = useState<string | null>(null);
-    const [totalMujeres, setTotalMujeres] = useState<number | null>(null);
-    const [totalHombres, setTotalHombres] = useState<number | null>(null);
-    const [totalOtro, setTotalOtro] = useState<number | null>(null);
-    const [grupoPoblacional, setGrupoPoblacional] = useState<string | null>(null);
+    const [totalMujeres, setTotalMujeres] = useState<number>(0);
+    const [totalHombres, setTotalHombres] = useState<number>(0);
+    const [totalOtro, setTotalOtro] = useState<number>(0);
+    const [grupoPoblacional, setGrupoPoblacional] = useState<string>("");
     const [personasPorGrupo, setPersonasPorGrupo] = useState<PersonasPorGrupo>({ discapacidad: 0, migrante: 0, indigena: 0, afro: 0, victima: 0 });
-    const [observaciones, setObservaciones] = useState<string | null>("");
+    const [observaciones, setObservaciones] = useState<string>("");
     const [temaOptions, setTemaOptions] = useState(new Array());
     const [saveResultType, setSaveResultType] = useState("");
     const [saveMessage, setSaveMessage] = useState("");
@@ -117,8 +117,19 @@ export default function CapacitacionesForm() {
         setFechaInicio("");
         setFechaFin("");
         setNombreTema("");
-        setTemaId(null);
+        setTemaId("");
         setErrors({});
+        setZona("");
+        setLinea("");
+        setPoblacion("");
+        setTipoIntervencion("");
+        setRangoEdad(null);
+        setTotalMujeres(0);
+        setTotalHombres(0);
+        setTotalOtro(0);
+        setGrupoPoblacional("");
+        setPersonasPorGrupo({ discapacidad: 0, migrante: 0, indigena: 0, afro: 0, victima: 0 });
+        setObservaciones("");
     };
 
     async function loadCapacitacion() {
@@ -144,15 +155,15 @@ export default function CapacitacionesForm() {
         setNombreInstitucion(data.institucion.nombreInstitucion);
         setNombreTema(data.tema.nombreTema);
         setTemaId(data.tema.id);
-        setZona(data.zona);
-        setLinea(data.linea);
-        setPoblacion(data.poblacion);
-        setTipoIntervencion(data.tipoIntervencion);
+        setZona(data.zona ?? "");
+        setLinea(data.linea ?? "");
+        setPoblacion(data.poblacion ?? "");
+        setTipoIntervencion(data.tipoIntervencion ?? "");
         setRangoEdad(data.rangoEdad);
-        setTotalMujeres(data.totalMujeres);
-        setTotalHombres(data.totalHombres);
-        setTotalOtro(data.totalOtro);
-        setGrupoPoblacional(data.grupoPoblacional);
+        setTotalMujeres(data.totalMujeres ?? 0);
+        setTotalHombres(data.totalHombres ?? 0);
+        setTotalOtro(data.totalOtro ?? 0);
+        setGrupoPoblacional(data.grupoPoblacional ?? "");
         setPersonasPorGrupo({
             discapacidad: data.personasGrupoPoblacional?.discapacidad || 0, 
             migrante: data.personasGrupoPoblacional?.migrante || 0, 
@@ -160,7 +171,7 @@ export default function CapacitacionesForm() {
             afro: data.personasGrupoPoblacional?.afro || 0,
             victima: data.personasGrupoPoblacional?.victima || 0
         });
-        setObservaciones(data.observaciones);        
+        setObservaciones(data.observaciones || "");        
     }
     //#region render
     return (
@@ -173,7 +184,7 @@ export default function CapacitacionesForm() {
                 event.preventDefault();
                 setSaveResultType("");
                 setSaveMessage("");
-                if (institucion === null || municipio === null || descripcion === "" || fechaInicio === "" || temaId === null || zona === null || linea === null || poblacion === null || tipoIntervencion === null || rangoEdad === null || grupoPoblacional === null) {
+                if (!institucion || municipio === null || descripcion === "" || fechaInicio === "" || temaId === null || zona === null || linea === null || poblacion === null || tipoIntervencion === null || rangoEdad === null || grupoPoblacional === null) {
                     setSaveResultType("error");
                     setSaveMessage("Tiene que llenar todos los campos obligatorios");
                     return;
@@ -340,7 +351,7 @@ export default function CapacitacionesForm() {
                         setNombreTema(e.label);
                     }}
                     onClear={() => {
-                        setTemaId(null);
+                        setTemaId("");
                         setNombreTema("");
                     }}
                     onChange={(e) => {
@@ -358,13 +369,13 @@ export default function CapacitacionesForm() {
                     required
                     label="Zona"
                     placeholder="Seleccione la zona donde se realizará la capacitación"
-                    value={zona || ""}
+                    value={zona}
                     options={zonas.map((zona) => ({ id: zona, label: zona }))}
                     onSelect={(e) => {
                         setZona(e.id);                        
                     }}
                     onClear={() => {
-                        setZona(null);
+                        setZona("");
                     }}
                     onChange={(e) => {
                         let { value } = e.target;
@@ -381,13 +392,13 @@ export default function CapacitacionesForm() {
                     required
                     label="Linea"
                     placeholder="Seleccione la linea de la capacitación"
-                    value={linea || ""}
+                    value={linea}
                     options={lineas.map((linea) => ({ id: linea, label: linea }))}
                     onSelect={(e) => {
                         setLinea(e.id);
                     }}
                     onClear={() => {
-                        setLinea(null);
+                        setLinea("");
                     }}
                     onChange={(e) => {
                         let { value } = e.target;
@@ -404,13 +415,13 @@ export default function CapacitacionesForm() {
                     required
                     label="Población"
                     placeholder="Seleccione la población objetivo de la capacitación"
-                    value={poblacion || ""}
+                    value={poblacion}
                     options={poblaciones.map((poblacion) => ({ id: poblacion, label: poblacion }))}
                     onSelect={(e) => {
                         setPoblacion(e.id);
                     }}
                     onClear={() => {
-                        setPoblacion(null);
+                        setPoblacion("");
                     }}
                     onChange={(e) => {
                         let { value } = e.target;
@@ -427,13 +438,13 @@ export default function CapacitacionesForm() {
                     required
                     label="Tipo de intervención"
                     placeholder="Seleccione el tipo de intervención"
-                    value={tipoIntervencion || ""}
+                    value={tipoIntervencion}
                     options={tiposIntervencion.map((tipoIntervencion) => ({ id: tipoIntervencion, label: tipoIntervencion }))}
                     onSelect={(e) => {
                         setTipoIntervencion(e.id);
                     }}
                     onClear={() => {
-                        setTipoIntervencion(null);
+                        setTipoIntervencion("");
                     }}
                     onChange={(e) => {
                         let { value } = e.target;
@@ -472,7 +483,7 @@ export default function CapacitacionesForm() {
                 <Label htmlFor="totalMujeres">Total de mujeres</Label>
                 <Input
                     type="number"
-                    value={totalMujeres || ""}
+                    value={totalMujeres}
                     onChange={(e) => {
                         let { value } = e.target;
                         setTotalMujeres(parseInt(value));
@@ -484,7 +495,7 @@ export default function CapacitacionesForm() {
                 <Label htmlFor="totalHombres">Total de hombres</Label>
                 <Input
                     type="number"
-                    value={totalHombres || ""}
+                    value={totalHombres}
                     onChange={(e) => {
                         let { value } = e.target;
                         setTotalHombres(parseInt(value));
@@ -496,7 +507,7 @@ export default function CapacitacionesForm() {
                 <Label htmlFor="totalOtro">Total de otro</Label>
                 <Input
                     type="number"
-                    value={totalOtro || ""}
+                    value={totalOtro}
                     onChange={(e) => {
                         let { value } = e.target;
                         setTotalOtro(parseInt(value));
@@ -510,13 +521,13 @@ export default function CapacitacionesForm() {
                     required
                     label="Grupo poblacional"
                     placeholder="Seleccione el grupo poblacional"
-                    value={grupoPoblacional || ""}
+                    value={grupoPoblacional}
                     options={gruposPoblacionales.map((grupoPoblacional) => ({ id: grupoPoblacional, label: grupoPoblacional }))}
                     onSelect={(e) => {
                         setGrupoPoblacional(e.id);
                     }}
                     onClear={() => {
-                        setGrupoPoblacional(null);
+                        setGrupoPoblacional("");
                     }}
                     onChange={(e) => {
                         let { value } = e.target;
@@ -551,7 +562,7 @@ export default function CapacitacionesForm() {
                 <TextAreaField
                     label="Observaciones"
                     descriptiveText="Complete este campo si tiene alguna observación adicional"             
-                    value={observaciones || ""}
+                    value={observaciones}
                     onChange={(e) => {
                         let { value } = e.target;
                         setObservaciones(value);

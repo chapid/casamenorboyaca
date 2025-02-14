@@ -1,5 +1,5 @@
 'use client';
-import { signUp } from "aws-amplify/auth"
+import { signUp, confirmSignUp } from "aws-amplify/auth"
 import { generateClient } from 'aws-amplify/data';
 import { useState } from 'react';
 import { Button, Flex, Grid, TextField, Label, Input } from "@aws-amplify/ui-react";
@@ -8,13 +8,14 @@ import { type Schema } from '@/amplify/data/resource';
 
 const client = generateClient<Schema>({
     authMode: 'iam'
-  });
+});
 
 export default function SignUpForm() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [name, setName] = useState('');
+    const [showCode, setShowCode] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [code, setCode] = useState('');
     const [saveResultType, setSaveResultType] = useState("");
     const [saveMessage, setSaveMessage] = useState("");
 
@@ -33,26 +34,42 @@ export default function SignUpForm() {
             return;
         }
         try {
-            await signUp({
+            const { nextStep: signUpNextStep } = await signUp({
                 username: email,
-                password,
-                options: {
-                    userAttributes: {
-                        name,
-                    }
-                }
-            });
-            setSaveResultType("success");
-            setSaveMessage("Usuario registrado correctamente");
-        } catch (err) {
-            setSaveResultType("error");
-            setSaveMessage("Error al registrar usuario");
+                password: password,
+            })
+            setLoading(false)
+            if (signUpNextStep.signUpStep === 'CONFIRM_SIGN_UP') {
+                setShowCode(true)
+            }
+        } catch (error) {
+            setLoading(false)
+            alert("Error al crear la cuenta, confirme que los datos son correctos"+error);
         }
-        setLoading(false);
+    }
+
+    async function handleConfirmSignUp() {
+        console.log("Confirming sign up")
+        // ... validate inputs
+        // Confirm sign up with the OTP received
+        setLoading(true)
+        const { nextStep: confirmSignUpNextStep } = await confirmSignUp({
+            username: email,
+            confirmationCode: code,
+        });
+        setLoading(false)
+
+        if (confirmSignUpNextStep.signUpStep === 'DONE') {
+            setSaveResultType("success");
+            setSaveMessage("Registro exitoso redirigiendo...");
+            setLoading(false);
+            //Redirect to the /login page
+            window.location.href = "/signin";
+        }
     }
 
     return (
-        <div className="w-screen min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-800 px-4 sm:px-6 lg:px-8">
+        <div className="w-screen flex items-center justify-center bg-gray-50 dark:bg-gray-800 px-4 sm:px-6 lg:px-8">
             <div className="relative py-3 sm:max-w-xs sm:mx-auto">
                 <div className="min-h-96 px-8 py-6 mt-4 text-left bg-white dark:bg-gray-900  rounded-xl shadow-lg">
                     <div className="flex flex-col justify-center items-center h-full select-none">
@@ -72,13 +89,21 @@ export default function SignUpForm() {
                             <MessagesHandler messageType={saveResultType} messageContent={saveMessage} />
                             <Label htmlFor="email">Correo</Label>
                             <Input type="email" id="email" name="email" onChange={e => setEmail(e.target.value)} required />
-                            <Label htmlFor="nombre">Nombre</Label>
-                            <Input type="text" id="nombre" name="nombre" onChange={e => setName(e.target.value)} required />
+
                             <Label htmlFor="password">Contrase&ntilde;a</Label>
                             <Input type="password" id="password" name="password" required onChange={e => setPassword(e.target.value)} />
+                            {showCode && (
+                                <>
+                                    <Label htmlFor="code">C&oacute;digo</Label>
+                                    <Input type="text" id="code" name="code" required value={code} onChange={(e)=> setCode(e.target.value)} />
+                                    <div className="mt-5">
+                                        <Button onClick={() => handleConfirmSignUp()} disabled={loading}>{loading ? 'Cargando...' : 'Confirmar'}</Button>
+                                    </div>
+                                </>)
+                            }
                             <div className="mt-5">
-                                <Button type="submit" disabled={loading}>{loading ? 'Cargando...' : 'Registrarse'}</Button>                                
-                            </div>                           
+                                <Button type="submit" disabled={loading}>{loading ? 'Cargando...' : 'Registrarse'}</Button>
+                            </div>
                         </Grid>
 
                     </div>

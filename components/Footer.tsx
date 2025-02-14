@@ -19,10 +19,7 @@ const Footer: React.FC = () => {
 					<a href="#" className="mr-4 text-sm text-gray-500 hover:underline md:mr-6 dark:text-gray-400">Política de privacidad y tratamiento de datos</a>
 				</li>			
 				
-				<li>
-				<Link href="https://youtube.com/@casadelmenormarcofidelsuar2903?si=IEJZo2OLK80caoOa" rel="noopener noreferrer" target="_blank" className='text-6xl text-red-600'> <TfiYoutube/> </Link>
 				
-				</li>
 			</ul>
 		</div>
 		<hr className="my-6 border-gray-200 sm:mx-auto dark:border-gray-700 lg:my-8" />

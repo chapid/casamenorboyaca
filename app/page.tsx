@@ -1,13 +1,12 @@
 import Head from "next/head";
 import React, { use, useEffect } from "react";
-import { Inter } from "next/font/google";
-import styles from "@/styles/Home.module.css";
-import { getCurrentUser } from 'aws-amplify/auth';
-import { Link } from "@nextui-org/react";
-
-const inter = Inter({ subsets: ["latin"] });
+import ButtonSection from "@/components/ButtonsSection";
+import FacebookFeed from "@/components/FacebookFeed";
 import Image from 'next/image';
 import portada from '../public/portada.png'
+import { Divider } from "@nextui-org/react";
+import SocialMediaBar from "@/components/SocialMediaBar";
+import YouTubeFeed from "@/components/YoutubeFeed";
 
 export default function Home() {
 
@@ -19,22 +18,33 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-
       <main>
-        <div className="w-full h-full bg-indigo-400">
-          <div className="container items-center max-w-6xl px-8 mx-auto xl:px-5">
-            <div className="flex flex-wrap items-center sm:-mx-3">
-              <div className="w-full  md:px-3">
-                <Image src={portada} className="w-screen h-2/3" alt="En construccion" width={800} height={800} />
+        <div className="w-full h-full bg-white">
+          <div className="w-full">
+            <Image src={portada} alt="En construccion" layout="responsive" />
+          </div>
+          <div className="w-full">
+            <ButtonSection />
+            <Divider className="my-4" />
+            <h1 className="text-center text-4xl font-bold py-5">Nuestras publicaciones</h1>
+            <div className="flex justify-center">
+              <FacebookFeed pageUrl="https://www.facebook.com/CasaDelMenorDeBoyaca" />
+            </div>
+            <h1 className="text-center text-4xl font-bold py-5">Mirar en Youtube</h1>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 px-40 py-20">
+              <div>
+                <YouTubeFeed />
               </div>
-
+              <div className="flex items-center justify-center">
+                <div> 
+                  <h1 className="text-2xl font-bold">Las relaciones interpersonales</h1>               
+                <p className="text-justify">Tenemos videos en nuestro canal de youtube, suscribete para recibir notificaciones de nuevos videos</p>
+                </div>
+              </div>
             </div>
           </div>
-
-
-
+          <SocialMediaBar />
         </div>
-
       </main>
     </>
   );

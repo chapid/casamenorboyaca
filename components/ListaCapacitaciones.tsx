@@ -12,6 +12,8 @@ import { FaRegEdit } from "react-icons/fa";
 import { MdAddPhotoAlternate } from "react-icons/md";
 import UploadCapacitacionesEvidences from "./UploadCapacitacionesEvidences";
 import DetallesCapacitacionModal from "./DetallesCapacitacionModal";
+import SeeEvidences from "./SeeEvidences";
+import { FcGallery } from "react-icons/fc";
 
 
 const client = generateClient<Schema>();
@@ -50,6 +52,7 @@ export default function ListaCapacitaciones() {
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
     const [isOpenDetails, setIsOpenDetails] = React.useState(false);
     const [ asistentes, setAsistentes ] = useState(new Array<any>());
+    const [isOpenSeeEvidences, setIsOpenSeeEvidences] = React.useState(false);
 
     const showAssistantsList = (listaAsistentes: React.SetStateAction<any[]>) => {
         setAsistentes(listaAsistentes);
@@ -139,6 +142,11 @@ export default function ListaCapacitaciones() {
                                 <MdAddPhotoAlternate onClick={() => handleEvidencesUpload(capacitacion.id)} />
                             </span>
                         </Tooltip>
+                        <Tooltip content="Ver evidencias">
+                            <span className="text-lg text-primary cursor-pointer active:opacity-50">
+                                <FcGallery onClick={() => handleSeeEvidences(capacitacion.id)} />
+                            </span>
+                        </Tooltip>
                     </div>
                 );
             default:
@@ -153,15 +161,23 @@ export default function ListaCapacitaciones() {
 
     function handleEvidencesUpload(id: string) {
         //Show dialog to upload evidences
+        setCapacitacionId(id);
         setIsOpenEv(true);
         console.log("Agregar evidencia para capacitación con id: ", id);
+    }
+
+    function handleSeeEvidences(id: string) {
+        //Show dialog to see evidences
+        setCapacitacionId(id);
+        setIsOpenSeeEvidences(true);
+        console.log("Ver evidencias para capacitación con id: ", id);
     }
 
 
     return (
         <div className="w-full">
-
-            <UploadCapacitacionesEvidences capacitacionId="id" isOpen={isOpenEv} onCloseFunction={() => setIsOpenEv(false)} />
+            <SeeEvidences capacitacionId={capacitacionId} isOpen={isOpenSeeEvidences} onCloseFunction={() => setIsOpenSeeEvidences(false)} />
+            <UploadCapacitacionesEvidences capacitacionId={capacitacionId} isOpen={isOpenEv} onCloseFunction={() => setIsOpenEv(false)} />
             <DetallesCapacitacionModal capacitacionId={capacitacionId} isOpen={isOpenDetails} onCloseFunction={() => setIsOpenDetails(false)} />
             <p className="text-2xl text-center">Lista de capacitaciones</p>
             {loading ? <div className="w-full flex justify-center"><Spinner label="Cargando..." color="warning" /></div>

@@ -11,11 +11,13 @@ import TemasForm from "@/components/TemasForm";
 import ListaUsuarios from "@/components/ListaUsuarios";
 import ReportForm from "@/components/Estadisticas";
 import NotAuthorized from "@/components/NotAuthorized";
+
 import { useAuthenticator } from '@aws-amplify/ui-react';
 import { useState } from "react";
 import { InstitutionIdContext, TemaIdContext, CapacitacionIdContext, MunicipioIdContext } from "@/components/IdContext";
 
 import { Tabs, Tab, Card, CardBody, CardHeader, Divider, CardFooter, Image } from "@nextui-org/react";
+import Loading from "@/components/Loading";
 
 function Page() {
   const [selected, setSelected] = useState("capacitaciones");
@@ -27,7 +29,7 @@ function Page() {
 
   return (
     <>
-    {authStatus === 'configuring' && 'Cargando...'}
+    {authStatus === 'configuring' && <Loading show={authStatus === 'configuring'} />}
     {authStatus !== 'authenticated' ? <NotAuthorized /> : 
     <div className="flex px-5 w-full flex-col">
       <Card isFooterBlurred>

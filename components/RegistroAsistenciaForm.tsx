@@ -24,7 +24,9 @@ export function RegistroAsistenciaForm ({setAssistantName}:RegistroAsistenciaFor
     });
 
     async function loadCapacitaciones() {
-        const { data } = await client.models.Capacitacion.list({ limit: 1000 });
+        //Query to get all capacitaciones that start from yesterday to tomorrow 
+        const { data } = await client.models.Capacitacion.list({ filter: { fechaInicio: { between: [new Date(new Date().getTime() - 86400000).toISOString(), new Date(new Date().getTime() + 86400000).toISOString()] } } });
+        console.log('capacitaciones', data);
         setCapacitaciones(data || []);
         setCapacitacionesOptions(data.map((capacitacion: { id: any; descripcion: any; }) => ({ id: capacitacion.id, label: capacitacion.descripcion })));
     }
@@ -39,7 +41,9 @@ export function RegistroAsistenciaForm ({setAssistantName}:RegistroAsistenciaFor
         e.preventDefault();    
         setSaveResultType("");
         setSaveMessage("");
-        if (nombre === "" || apellido === "" || correo === "") {
+        if (nombre === "" || apellido === "" || correo === "" || capacitacionId === "") {
+            setSaveResultType("error");
+            setSaveMessage("Por favor llene todos los campos");
             return;
         }
         try {
@@ -109,11 +113,11 @@ export function RegistroAsistenciaForm ({setAssistantName}:RegistroAsistenciaFor
             />
 
             <Flex direction="column" gap="small">
-                <Label htmlFor="municipio">Capacitación</Label>
+                <Label htmlFor="municipio">Capacitación a la que asisti&oacute;</Label>
                 <Autocomplete
                     label="Capacitación"
                     required
-                    placeholder="Seleccione la capacitación a la que asistió"
+                    placeholder="Seleccione la capacitación"
                     value={capacitacionNombre}
                     options={capacitacionesOptions}
                     onClear={() => {

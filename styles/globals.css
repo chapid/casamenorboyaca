@@ -81,7 +81,7 @@
 
 html,
 body {
-  max-width: 100vw;
+  
   overflow-x: hidden;
 }
 
@@ -104,4 +104,15 @@ a {
   html {
     color-scheme: dark;
   }
+}
+
+.facebook-feed {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+[data-overlay-container=true] {
+  height: 100%;
+  width: 100%;
 }

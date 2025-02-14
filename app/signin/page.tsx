@@ -36,7 +36,7 @@ export default function App() {
             setLoading(false);
             setSaveResultType("error");
             console.error(error);
-            setSaveMessage("Error al iniciar sesi&oacute;n");
+            setSaveMessage("Error al iniciar sesión");
         })
     }
 
@@ -50,12 +50,12 @@ export default function App() {
 
     return (
 
-        <div className="w-screen min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-800 px-4 sm:px-6 lg:px-8">
+        <div className="w-screen flex items-center justify-center bg-gray-50 dark:bg-gray-800 px-4 sm:px-6 lg:px-8">
             <div className="relative py-3 sm:max-w-xs sm:mx-auto">
                 <div className="min-h-96 px-8 py-6 mt-4 text-left bg-white dark:bg-gray-900  rounded-xl shadow-lg">
                     <div className="flex flex-col justify-center items-center h-full select-none">
                         <div className="flex flex-col items-center justify-center gap-2 mb-8">
-                            <a href="https://amethgalarcio.web.app/" target="_blank">
+                            <a href="/" target="_blank">
                                 <img src="logo.png" className="w-8" />
                             </a>
                             <p className="m-0 text-[16px] font-semibold dark:text-white">Inicio de sesi&oacute;n</p>

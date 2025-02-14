@@ -67,10 +67,11 @@ export default function InstitucionesForm() {
         }
         try {   
           if (institucionId === "") {
-            await client.models.Institucion.create({                        
-              nombreInstitucion: nombreInstitucion.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase(),  
-              municipioId: municipio,                                  
+            const data = await client.models.Institucion.create({                        
+              nombreInstitucion: nombreInstitucion.toUpperCase(),
+              municipioId: municipio,
             });
+            console.log(data);
             setSaveMessage("Institución creada correctamente");
           } else {
             await client.models.Institucion.update({
