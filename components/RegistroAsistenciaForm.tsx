@@ -1,4 +1,4 @@
-import React, { use, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button, Flex, Grid, TextField, Autocomplete, Label, View, ComboBoxOption } from "@aws-amplify/ui-react";
 import MessagesHandler from "./MessagesHandler";
 import { generateClient } from "aws-amplify/api";

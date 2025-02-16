@@ -1,11 +1,8 @@
 'use client'
-import { useState, useEffect, use } from 'react';
+import { useState, useEffect } from 'react';
 import { generateClient } from 'aws-amplify/data';
 import type { Schema } from '@/amplify/data/resource';
-import { getCurrentUser } from 'aws-amplify/auth';
 
-import { FaChalkboardTeacher, FaTheaterMasks } from "react-icons/fa";
-import { Button } from "@nextui-org/react";
 import Gallery from '@/components/Gallery';
 import { Capacitacion } from '@/components/Gallery';
 

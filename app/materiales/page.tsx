@@ -62,43 +62,6 @@ function Materiales() {
     setClient(client);
   }
 
-  /*async function downloadFile(name: string) {
-    try {
-      const response = await fetch(
-        process.env.NEXT_PUBLIC_BASE_URL + `/api/download?filename=temas/${name}.pdf`,
-        { method: 'GET' }
-      )
-
-      if (response.ok) {
-        const url = response.headers.get('url')
-        console.log('Got presigned URL:', url)
-        if (!url) {
-          console.error('S3 Upload Error:', response.body)
-          alert('Falló la pre-carga de la presentación.')
-          return
-        }
-        const uploadResponse = await fetch(url)
-
-        if (uploadResponse.ok) {
-          const blob = await uploadResponse.blob();
-          const url = window.URL.createObjectURL(blob);
-          const link = document.createElement('a');
-          link.href = url;
-          link.download = name;
-          link.click();
-        } else {
-          console.error('S3 Download Error:', uploadResponse)
-          alert('Falló la carga de la presentación.')
-        }
-      } else {
-        console.error('S3 Download Error:', response.body)
-        alert('Falló la pre-carga de la presentación.')
-      }
-    } catch (error) {
-      console.log('Error download: ', error);
-    }
-  }*/
-
   async function getUrl(name: string) {
     try {
       const response = await fetch(

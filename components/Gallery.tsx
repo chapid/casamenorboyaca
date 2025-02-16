@@ -50,7 +50,7 @@ const Gallery: React.FC<GalleryProps> = ({ capacitacion }) => {
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 md:gap-6 xl:gap-8 w-10/12 ">
                 {imageUrls.length === 0 && <p>No hay evidencias para mostrar</p>}
                 {imageUrls.map((url, index) => (
-                    <div className="w-80 bg-white p-3">
+                    <div className="w-80 bg-white p-3" key={index}>
                         <StorageImage alt="evidencia" path={url} className="h-52 w-full object-cover" />
                         <div className="mt-3 flex flex-wrap">
                             <div className="w-full">
