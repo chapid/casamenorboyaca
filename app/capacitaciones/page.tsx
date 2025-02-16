@@ -7,27 +7,22 @@ import { getCurrentUser } from 'aws-amplify/auth';
 import { FaChalkboardTeacher, FaTheaterMasks } from "react-icons/fa";
 import { Button } from "@nextui-org/react";
 import Gallery from '@/components/Gallery';
+import { Capacitacion } from '@/components/Gallery';
 
 
 //const client = generateClient<Schema>();
 
-interface Capacitacion {
-  id: string;
-  institucion: {
-    nombreInstitucion: string;
-  };
-  fechaInicio: string;
-}
+
 
 function Page() {
   const [capacitaciones, setCapacitaciones] = useState<Capacitacion[]>([]);
-  const [capacitacionId, setCapacitacionId] = useState<string>('');
+  const [capacitacionS, setCapacitacionS] = useState<Capacitacion>();
   const [authMode, setAuthMode] = useState<any>('');
 
   async function listCapacitaciones(client: any) {
     console.log('cliente', client);
     const data = await client.models.Capacitacion.list({
-      selectionSet: ['id', 'institucion.nombreInstitucion', 'fechaInicio'],
+      selectionSet: ['id', 'institucion.nombreInstitucion', 'fechaInicio', 'descripcion', 'institucion.municipio.nombreMunicipio'],
     });
     
     console.log('errores', data.errors);
@@ -49,25 +44,20 @@ function Page() {
 
 
   return (
-    <div
-      className="relative bg-gray-50 dark:bg-slate-900 w-screen h-2/3 pattern"
-    >
-      <nav
-        className="z-20 flex shrink-0 grow-0 justify-around gap-4 border-t border-gray-200 bg-white/50 p-2.5 shadow-lg backdrop-blur-lg dark:border-slate-600/60 dark:bg-slate-800/50 fixed top-2/4 -translate-y-2/4 left-6 min-h-[auto] min-w-[300px] flex-col rounded-lg border"
-      >
-        Elija una de las capacitaciones para ver las evidencias
-      
-        
+    <div className='grid grid-cols-4 gap-4 w-full'>
+      <div className='sm:col-span-1 col-span-4 h-400 overflow-auto pl-3'>
+      <p className='text-sm'>Elija una de las capacitaciones para ver las evidencias</p>
         {capacitaciones.map((capacitacion) => (
-
-          <Button key={capacitacion.id} color="secondary" variant="light" size="lg"  onClick={() => setCapacitacionId(capacitacion.id)}>
-            {capacitacion.institucion.nombreInstitucion} - {capacitacion.fechaInicio.substring(0, 10)}
-          </Button>
+          <div key={capacitacion.id} onClick={() => setCapacitacionS(capacitacion)} className='flex flex-col gap-2 p-2 cursor-pointer'>
+            <p className='font-bold'>{capacitacion.institucion.nombreInstitucion}</p>
+            <p className='text-sm'>{capacitacion.institucion.municipio.nombreMunicipio} - {capacitacion.fechaInicio.substring(0, 10)}</p>          
+          </div>
         ))
         }
-
-      </nav>
-      <Gallery capacitacionId={capacitacionId} />
+      </div>
+      <div className='sm:col-span-3 col-span-4'>
+      <Gallery capacitacion={capacitacionS} />
+      </div>
     </div>
 
   );

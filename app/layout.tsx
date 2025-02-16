@@ -28,7 +28,7 @@ export default function RootLayout({
   
   return (
     <html lang="en">
-    <body className=" bg-white dark:bg-[#0F172A] w-full h-full">
+    <body className=" bg-white dark:bg-[#0F172A] sm:w-full h-full">
     
     <Authenticator.Provider>
       <Providers>
@@ -39,7 +39,7 @@ export default function RootLayout({
 <div className="footer fixed bottom-3 right-14">
   <Whatsapp />
 </div>
-<footer className="mt-auto bg-gray-200 p-4 text-center">
+<footer className="mt-auto bg-gray-200  text-center">
 <Footer />
       </footer>
       </div>

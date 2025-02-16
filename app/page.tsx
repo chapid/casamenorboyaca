@@ -4,9 +4,10 @@ import ButtonSection from "@/components/ButtonsSection";
 import FacebookFeed from "@/components/FacebookFeed";
 import Image from 'next/image';
 import portada from '../public/portada.png'
-import { Divider } from "@nextui-org/react";
+import { Divider, Button } from "@nextui-org/react";
 import SocialMediaBar from "@/components/SocialMediaBar";
 import YouTubeFeed from "@/components/YoutubeFeed";
+import SocialMediaHorizontal from "@/components/SocialMediaHorizontal";
 
 export default function Home() {
 
@@ -26,23 +27,61 @@ export default function Home() {
           <div className="w-full">
             <ButtonSection />
             <Divider className="my-4" />
-            <h1 className="text-center text-4xl font-bold py-5">Nuestras publicaciones</h1>
-            <div className="flex justify-center">
-              <FacebookFeed pageUrl="https://www.facebook.com/CasaDelMenorDeBoyaca" />
+            <div className="flex items-center justify-center pb-8">
+              <Button
+                className="bg-gradient-to-r from-purple-500 to-indigo-600 text-white shadow-lg text-3xl font-bold py-5" size="lg"
+                radius="lg">
+                Nuestras publicaciones
+              </Button>
             </div>
-            <h1 className="text-center text-4xl font-bold py-5">Mirar en Youtube</h1>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 px-40 py-20">
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 px-40">
+              <div className="flex justify-center">
+                <FacebookFeed pageUrl="https://www.facebook.com/CasaDelMenorDeBoyaca" />
+              </div>
+              <div className="flex items-center justify-center">
+                <div>
+                  <h1 className="text-2xl font-bold">Visita nuestra pagina oficial</h1>
+                  <div className="w-screen px-4 sm:px-0 sm:w-auto">
+                    <a href="http://www.casadelmenorboyaca.gov.co/" target="_blank">
+                      <img src="miniature.png" alt="Casa del menor" />
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+
+            <div className="flex items-center justify-center py-8">
+              <Button
+                className="bg-gradient-to-r from-purple-500 to-indigo-600 text-white shadow-lg text-3xl font-bold py-5" size="lg"
+                radius="lg">
+                Mirar en Youtube
+              </Button>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 px-40">
               <div>
                 <YouTubeFeed />
               </div>
               <div className="flex items-center justify-center">
-                <div> 
-                  <h1 className="text-2xl font-bold">Las relaciones interpersonales</h1>               
-                <p className="text-justify">Tenemos videos en nuestro canal de youtube, suscribete para recibir notificaciones de nuevos videos</p>
+                <div>
+                  <h1 className="text-2xl font-bold">Las relaciones interpersonales</h1>
+                  <p className="text-justify">Tenemos videos en nuestro canal de youtube, suscribete para recibir notificaciones de nuevos videos</p>
                 </div>
               </div>
             </div>
+
+            <div className="flex items-center justify-center py-8">
+              <Button
+                className="bg-gradient-to-r from-purple-500 to-indigo-600 text-white shadow-lg text-3xl font-bold py-5" size="lg"
+                radius="lg">
+                Lineas de atencion
+              </Button>
+            </div>
+            <SocialMediaHorizontal />
           </div>
+
           <SocialMediaBar />
         </div>
       </main>

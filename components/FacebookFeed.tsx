@@ -29,8 +29,8 @@ const FacebookFeed = ({ pageUrl }: FacebookFeedProps) => {
                     className="fb-page"
                     data-href={pageUrl}
                     data-tabs="timeline"
-                    data-width="500"
-                    data-height="600"
+                    data-width="400"
+                    data-height="400"
                     data-small-header="true"
                     data-adapt-container-width="false"
                     data-hide-cover="true"

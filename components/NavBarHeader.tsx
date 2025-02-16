@@ -34,9 +34,9 @@ const adminMenuItems = {
 }
 
 const allMenuItems = {
-  'Nosotros': '/',
-  'Programas y estrategias': '/capacitaciones',
-  'Participa': '/materiales',
+  'Nuestras actividades': '/',
+  'Descarga nuestro material': '/materiales',
+  'Nuestro trabajo': '/capacitaciones',
 }
 
 export default function NavBarHeader() {
@@ -124,7 +124,7 @@ export default function NavBarHeader() {
         </NavbarItem>
       )) : Object.entries(allMenuItems).map(([key, value], index) => (
         <NavbarItem key={`${key}-${index}`} isActive={value === '/' ? segment === null : segment === value.replace('/', '')}>
-          <Link color="foreground" href={value}>
+          <Link color="foreground" href={value} className="text-2xl font-semibold" >
             {key}
           </Link>
         </NavbarItem>

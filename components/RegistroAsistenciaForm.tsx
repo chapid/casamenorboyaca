@@ -23,9 +23,8 @@ export function RegistroAsistenciaForm ({setAssistantName}:RegistroAsistenciaFor
         authMode: 'iam'
     });
 
-    async function loadCapacitaciones() {
-        //Query to get all capacitaciones that start from yesterday to tomorrow 
-        const { data } = await client.models.Capacitacion.list({ filter: { fechaInicio: { between: [new Date(new Date().getTime() - 86400000).toISOString(), new Date(new Date().getTime() + 86400000).toISOString()] } } });
+    async function loadCapacitaciones() {        
+        const { data } = await client.models.Capacitacion.list();
         console.log('capacitaciones', data);
         setCapacitaciones(data || []);
         setCapacitacionesOptions(data.map((capacitacion: { id: any; descripcion: any; }) => ({ id: capacitacion.id, label: capacitacion.descripcion })));

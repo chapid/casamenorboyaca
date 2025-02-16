@@ -1,4 +1,4 @@
-:root {
+body:root {
   --max-width: 1100px;
   --border-radius: 12px;
   --font-mono: ui-monospace, Menlo, Monaco, "Cascadia Mono", "Segoe UI Mono",
@@ -112,7 +112,16 @@ a {
   margin-top: 20px;
 }
 
-[data-overlay-container=true] {
-  height: 100%;
+.custom-img {
+  object-fit: contain;
+  width: 100% !important;
+  position: relative !important;
+  height: unset !important;
+}
+
+.unset-img {
   width: 100%;
+}
+.unset-img > div {
+  position: unset !important;
 }
