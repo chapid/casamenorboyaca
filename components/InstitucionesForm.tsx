@@ -53,7 +53,7 @@ export default function InstitucionesForm() {
   }
   
   return (
-    <Grid
+    (<Grid
       as="form"
       rowGap="15px"
       columnGap="15px"
@@ -90,7 +90,6 @@ export default function InstitucionesForm() {
         }
       }}
     >
-
       <Autocomplete
         label="Municipio"    
         placeholder="Seleccione un municipio"
@@ -139,8 +138,7 @@ export default function InstitucionesForm() {
           ></Button>
         </Flex>
       </Flex>
-      
       <MessagesHandler messageType={saveResultType} messageContent={saveMessage} />
-    </Grid>
+    </Grid>)
   );
 }

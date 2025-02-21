@@ -4,8 +4,8 @@ import {
     ModalContent,
     ModalHeader,
     ModalBody,    
-  } from "@nextui-org/react";
-import Image from 'next/image';
+  } from "@heroui/react";
+import Image from "next/legacy/image";
 
 interface LoadingProps {
     show: boolean;    

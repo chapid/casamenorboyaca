@@ -4,7 +4,7 @@ import { Button, Flex, Grid, TextField, DropZone, Text, TextAreaField, VisuallyH
 import { useTemaIdContext } from "./IdContext";
 import { generateClient } from "aws-amplify/api";
 import type { Schema } from '@/amplify/data/resource';
-import {Progress} from "@nextui-org/react";
+import {Progress} from "@heroui/react";
 import { MdCheckCircle, MdFileUpload, MdRemoveCircle } from 'react-icons/md';
 import MessagesHandler from "./MessagesHandler";
 
@@ -92,54 +92,54 @@ export default function TemasForm() {
   }
   
   return (
-    <Grid
-      as="form"
-      rowGap="15px"
-      columnGap="15px"
-      padding="20px"
-      onSubmit={async (event) => {
-        event.preventDefault(); 
-        setSaveResultType("");
-        setSaveMessage(""); 
-        if (temaId === "" && files.length === 0) {
-          alert("Debe subir un archivo PDF");
-          return;
-        }
-        if (nombreTema === "" || descripcion === "") {
-          return;
-        }
-        try {   
-          if (temaId !== "") {
-            await client.models.Tema.update({                        
-              id: temaId,
-              nombreTema: nombreTema.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase(),  
-              descripcion: descripcion,                                  
-            });
-            if (files.length > 0)          
-              uploadFiles(temaId);
-            setSaveMessage("Tema actualizado correctamente"); 
-          }else{
-            const {data: tema} = await client.models.Tema.create({                        
-              nombreTema: nombreTema.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase(),  
-              descripcion: descripcion,                                  
-            });      
-            if (tema) {
-              uploadFiles(tema.id);
-              setSaveMessage("Tema creado correctamente");
+    (<Grid
+        as="form"
+        rowGap="15px"
+        columnGap="15px"
+        padding="20px"
+        onSubmit={async (event) => {
+          event.preventDefault(); 
+          setSaveResultType("");
+          setSaveMessage(""); 
+          if (temaId === "" && files.length === 0) {
+            alert("Debe subir un archivo PDF");
+            return;
+          }
+          if (nombreTema === "" || descripcion === "") {
+            return;
+          }
+          try {   
+            if (temaId !== "") {
+              await client.models.Tema.update({                        
+                id: temaId,
+                nombreTema: nombreTema.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase(),  
+                descripcion: descripcion,                                  
+              });
+              if (files.length > 0)          
+                uploadFiles(temaId);
+              setSaveMessage("Tema actualizado correctamente"); 
             }else{
-              setSaveMessage("Error al crear el tema");
-            }
-          }       
-          setSaveResultType("success");          
-          resetStateValues();          
-        } catch (err: any) {
-          console.error(err);
-          setSaveResultType("error");
-          setSaveMessage("Error al crear el tema");          
-        }
-      }}
-      
-    >    
+              const {data: tema} = await client.models.Tema.create({                        
+                nombreTema: nombreTema.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase(),  
+                descripcion: descripcion,                                  
+              });      
+              if (tema) {
+                uploadFiles(tema.id);
+                setSaveMessage("Tema creado correctamente");
+              }else{
+                setSaveMessage("Error al crear el tema");
+              }
+            }       
+            setSaveResultType("success");          
+            resetStateValues();          
+          } catch (err: any) {
+            console.error(err);
+            setSaveResultType("error");
+            setSaveMessage("Error al crear el tema");          
+          }
+        }}
+        
+      >
       <TextField
         label="Nombre tema"
         isRequired={true}
@@ -235,6 +235,6 @@ export default function TemasForm() {
         </Flex>
       </Flex>
       <MessagesHandler messageType={saveResultType} messageContent={saveMessage} />
-    </Grid>
+    </Grid>)
   );
 }

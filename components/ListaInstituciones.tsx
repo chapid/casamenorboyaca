@@ -1,6 +1,6 @@
 import React from "react";
 import { useInstitutionIdContext } from "@/components/IdContext";
-import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Tooltip, Spinner } from "@nextui-org/react";
+import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Tooltip, Spinner } from "@heroui/react";
 
 import { generateClient } from "aws-amplify/api";
 import { useState, useEffect } from 'react';

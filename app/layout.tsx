@@ -5,8 +5,7 @@ import { Amplify } from 'aws-amplify';
 import config from '@/amplify_outputs.json';
 import '@aws-amplify/ui-react/styles.css';
 import '../styles/styles.css';
-import {NextUIProvider} from "@nextui-org/react";
-import type { AppProps } from 'next/app';
+import {HeroUIProvider} from "@heroui/react";
 import React, { useEffect } from "react";
 
 import NavBarHeader from '@/components/NavBarHeader';
@@ -32,7 +31,7 @@ export default function RootLayout({
     
     <Authenticator.Provider>
       <Providers>
-      <NextUIProvider>    
+      <HeroUIProvider>    
       <div className="flex flex-col min-h-screen">
 <NavBarHeader  />
 {children}
@@ -43,7 +42,7 @@ export default function RootLayout({
 <Footer />
       </footer>
       </div>
-</NextUIProvider>
+</HeroUIProvider>
         
       </Providers></Authenticator.Provider>
     </body>

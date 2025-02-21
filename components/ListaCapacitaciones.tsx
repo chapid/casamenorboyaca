@@ -1,7 +1,7 @@
 import React from "react";
 import { useCapacitacionIdContext } from "./IdContext";
 import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Tooltip, Spinner, Button, 
-    Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure } from "@nextui-org/react";
+    Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure } from "@heroui/react";
 import { generateClient } from "aws-amplify/api";
 import { useState, useEffect } from 'react';
 import type { Schema } from '@/amplify/data/resource';

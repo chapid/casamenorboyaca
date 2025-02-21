@@ -2,9 +2,9 @@ import Head from "next/head";
 import React, { use, useEffect } from "react";
 import ButtonSection from "@/components/ButtonsSection";
 import FacebookFeed from "@/components/FacebookFeed";
-import Image from 'next/image';
+import Image from "next/legacy/image";
 import portada from '../public/portada.png'
-import { Divider, Button } from "@nextui-org/react";
+import { Divider, Button } from "@heroui/react";
 import SocialMediaBar from "@/components/SocialMediaBar";
 import YouTubeFeed from "@/components/YoutubeFeed";
 import SocialMediaHorizontal from "@/components/SocialMediaHorizontal";

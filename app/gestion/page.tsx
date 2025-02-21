@@ -11,12 +11,13 @@ import TemasForm from "@/components/TemasForm";
 import ListaUsuarios from "@/components/ListaUsuarios";
 import ReportForm from "@/components/Estadisticas";
 import NotAuthorized from "@/components/NotAuthorized";
+import { fetchAuthSession } from "aws-amplify/auth";
 
 import { useAuthenticator } from '@aws-amplify/ui-react';
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { InstitutionIdContext, TemaIdContext, CapacitacionIdContext, MunicipioIdContext } from "@/components/IdContext";
 
-import { Tabs, Tab, Card, CardBody, CardHeader, Divider, CardFooter, Image } from "@nextui-org/react";
+import { Tabs, Tab, Card, CardBody, Divider, CardFooter, Image } from "@heroui/react";
 import Loading from "@/components/Loading";
 
 function Page() {
@@ -26,6 +27,18 @@ function Page() {
   const [capacitacionId, setCapacitacionId] = useState<string>("");
   const [municipioId, setMunicipioId] = useState<string>("");
   const { authStatus } = useAuthenticator(context => [context.authStatus]);
+  const [userGroup, setUserGroup] = useState<string>();
+
+  useEffect(() => {
+    fetchAuthSession().then((session) => {
+      if (session.tokens) {
+        console.log("user belongs to following groups: " + session.tokens.accessToken.payload["cognito:groups"]);
+        setUserGroup(session.tokens.accessToken.payload["cognito:groups"] as string);
+      } else {
+        console.log("No tokens found in session");
+      }
+    });
+  }, []);
 
   return (
     <>
@@ -66,7 +79,7 @@ function Page() {
           <Card>
             <CardBody>
               <MunicipioIdContext.Provider value={{municipioId: municipioId, setMunicipioId}}>
-              <MunicipiosForm />
+                {userGroup === 'ADMINS' ? <MunicipiosForm /> : null}              
               <Divider className="my-4" />
               <ListaMunicipios />
               </MunicipioIdContext.Provider>
@@ -77,14 +90,14 @@ function Page() {
           <Card>
             <CardBody>
             <InstitutionIdContext.Provider value={{institucionId: institucionId, setInstitucionId}}>
-              <InstitucionesForm />
+            {userGroup === 'ADMINS' ? <InstitucionesForm /> : null}
               <Divider className="my-4" />
               <ListaInstituciones />
             </InstitutionIdContext.Provider>
             </CardBody>
           </Card>
         </Tab>
-        <Tab key="temas" title="Temas">
+        <Tab key="temas" title="Temas" isDisabled={userGroup !== 'ADMINS'}>
           <Card>
             <CardBody>
               <TemaIdContext.Provider value={{temaId: temaId, setTemaId}}>                
@@ -95,14 +108,14 @@ function Page() {
             </CardBody>
           </Card>
         </Tab>
-        <Tab key="usuarios" title="Usuarios">
+        <Tab key="usuarios" title="Usuarios" isDisabled={userGroup !== 'ADMINS'}>
           <Card>
             <CardBody>
               <ListaUsuarios />
             </CardBody>
           </Card>
         </Tab>
-        <Tab key="estadisticas" title="Estadisticas">
+        <Tab key="estadisticas" title="Estadisticas" isDisabled={userGroup !== 'ADMINS'}>
           <Card>
             <CardBody>
               <ReportForm />

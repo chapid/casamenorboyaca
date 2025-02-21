@@ -1,5 +1,5 @@
 import React from "react";
-import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, getKeyValue, Spinner } from "@nextui-org/react";
+import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, getKeyValue, Spinner } from "@heroui/react";
 
 import { generateClient } from "aws-amplify/api";
 import { useState, useEffect } from 'react';

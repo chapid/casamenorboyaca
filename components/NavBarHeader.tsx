@@ -6,7 +6,7 @@ import { Navbar, NavbarBrand, NavbarContent, NavbarItem, Link, Button,
   DropdownItem,
   DropdownTrigger,
   Dropdown,
-  DropdownMenu} from "@nextui-org/react";
+  DropdownMenu} from "@heroui/react";
 import { useSelectedLayoutSegment } from 'next/navigation'
 import { useAuthenticator } from '@aws-amplify/ui-react';
 import { AuthUser, getCurrentUser, signOut } from 'aws-amplify/auth';
@@ -15,7 +15,7 @@ import { generateClient } from 'aws-amplify/data';
 import { type Schema } from '@/amplify/data/resource';
 import { FaSearch } from "react-icons/fa";
 import { FaUserCircle } from "react-icons/fa";
-import Image from 'next/image';
+import Image from "next/legacy/image";
 
 async function fetchUserAttributes() {
   const client = generateClient<Schema>();
@@ -102,7 +102,7 @@ export default function NavBarHeader() {
           "data-[active=true]:after:bg-primary",
         ],
       }}
-      height={16}
+      height={105}
       maxWidth="full"
       onMenuOpenChange={setIsMenuOpen}
       className="px-0"
@@ -112,7 +112,7 @@ export default function NavBarHeader() {
           aria-label={isMenuOpen ? "Close menu" : "Open menu"}
           className="sm:hidden"
         />
-      <Image src="/logo.png" alt="Logo" width={150} height={50} />
+      <Image src="/logo.png" alt="Logo" width={110} height={110} />
       </NavbarBrand>
       <NavbarContent className="hidden sm:flex gap-4" justify="start">
       
