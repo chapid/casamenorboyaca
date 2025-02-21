@@ -79,7 +79,7 @@ function Page() {
           <Card>
             <CardBody>
               <MunicipioIdContext.Provider value={{municipioId: municipioId, setMunicipioId}}>
-                {userGroup === 'ADMINS' ? <MunicipiosForm /> : null}              
+                {userGroup == 'ADMINS' ? <MunicipiosForm /> : null}              
               <Divider className="my-4" />
               <ListaMunicipios />
               </MunicipioIdContext.Provider>
@@ -89,15 +89,15 @@ function Page() {
         <Tab key="instituciones" title="Instituciones">
           <Card>
             <CardBody>
-            <InstitutionIdContext.Provider value={{institucionId: institucionId, setInstitucionId}}>
-            {userGroup === 'ADMINS' ? <InstitucionesForm /> : null}
+            <InstitutionIdContext.Provider value={{institucionId: institucionId, setInstitucionId}}>              
+            {userGroup == 'ADMINS' ? <InstitucionesForm /> : null}
               <Divider className="my-4" />
               <ListaInstituciones />
             </InstitutionIdContext.Provider>
             </CardBody>
           </Card>
         </Tab>
-        <Tab key="temas" title="Temas" isDisabled={userGroup !== 'ADMINS'}>
+        <Tab key="temas" title="Temas" isDisabled={userGroup != 'ADMINS'}>
           <Card>
             <CardBody>
               <TemaIdContext.Provider value={{temaId: temaId, setTemaId}}>                
@@ -108,14 +108,14 @@ function Page() {
             </CardBody>
           </Card>
         </Tab>
-        <Tab key="usuarios" title="Usuarios" isDisabled={userGroup !== 'ADMINS'}>
+        <Tab key="usuarios" title="Usuarios" isDisabled={userGroup != 'ADMINS'}>
           <Card>
             <CardBody>
               <ListaUsuarios />
             </CardBody>
           </Card>
         </Tab>
-        <Tab key="estadisticas" title="Estadisticas" isDisabled={userGroup !== 'ADMINS'}>
+        <Tab key="estadisticas" title="Estadisticas" isDisabled={userGroup != 'ADMINS'}>
           <Card>
             <CardBody>
               <ReportForm />
