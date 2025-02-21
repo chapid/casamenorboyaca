@@ -97,11 +97,11 @@ function Page() {
             </CardBody>
           </Card>
         </Tab>
-        <Tab key="temas" title="Temas" isDisabled={userGroup != 'ADMINS'}>
+        <Tab key="temas" title="Temas">
           <Card>
             <CardBody>
               <TemaIdContext.Provider value={{temaId: temaId, setTemaId}}>                
-              <TemasForm />
+              {userGroup == 'ADMINS' ? <TemasForm /> : null}
               <Divider className="my-4" />
               <ListaTemas />
               </TemaIdContext.Provider>
