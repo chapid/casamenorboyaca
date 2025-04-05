@@ -1,5 +1,5 @@
 'use client'
-import { signIn } from "aws-amplify/auth"
+import { signIn, confirmSignIn } from "aws-amplify/auth"
 import type { FormEvent } from "react"
 import { Grid, Label } from "@aws-amplify/ui-react";
 import MessagesHandler from "@/components/MessagesHandler";
@@ -37,8 +37,10 @@ export default function App() {
     const [code, setCode] = useState("");
     const [isVisible, setIsVisible] = useState(false);
     const toggleVisibility = () => setIsVisible(!isVisible);
-    const [signInSession, setSignInSession] = useState(null);
+    const [signInSession, setSignInSession] = useState<any>(null);
     const [challenge, setChallenge] = useState("");
+    const [showNewPasswordForm, setShowNewPasswordForm] = useState(false);
+    const [newPassword, setNewPassword] = useState("");
     
     async function handleSubmit(event: FormEvent<SignInForm>) {
       event.preventDefault();
@@ -46,27 +48,53 @@ export default function App() {
     
       try {
         const form = event.currentTarget;
-        const { isSignedIn, nextStep, session } = await signIn({
-          username: form.elements.email.value,
-          password: form.elements.password.value,
-        });
+        const username = form.elements.email.value;
+        const password = form.elements.password.value;
     
-        if (nextStep.signInStep === "DONE") {
+        const response = await signIn({ username, password });
+    
+        if (response.nextStep.signInStep === "CONFIRM_SIGN_IN_WITH_NEW_PASSWORD") {
+          console.log("⚠ Requiere nueva contraseña");
+    
+          setSignInSession(response.session); // Guarda la sesión
+          setShowNewPasswordForm(true);       // Muestra el formulario
+          setSaveResultType("info");
+          setSaveMessage("Debes cambiar tu contraseña para continuar.");
+        } else {
           // Login exitoso
+          console.log("✅ Login exitoso");
           window.location.href = "/gestion";
-        } else if (nextStep.signInStep === "CONFIRM_SIGN_IN_WITH_NEW_PASSWORD") {
-          // Requiere nueva contraseña
-          setSignInSession(session); // Guarda la sesión para usarla luego
-          setChallenge("NEW_PASSWORD_REQUIRED");
         }
       } catch (error) {
-        console.error("Error al iniciar sesión:", error);
+        console.error("❌ Error al iniciar sesión:", error);
         setSaveResultType("error");
         setSaveMessage("Error al iniciar sesión");
       } finally {
         setLoading(false);
       }
     }
+
+    async function handleNewPasswordSubmit(e: FormEvent<HTMLFormElement>) {
+      e.preventDefault();
+      setLoading(true);
+    
+      try {
+        await confirmSignIn({
+          challengeResponse: newPassword,
+          signInSession,
+        });
+        console.log("✅ Contraseña cambiada, login exitoso");
+        window.location.href = "/gestion";
+      } catch (error) {
+        console.error("❌ Error al cambiar contraseña:", error);
+        setSaveResultType("error");
+        setSaveMessage("Error al cambiar la contraseña.");
+      } finally {
+        setLoading(false);
+      }
+    }
+
+
 
     async function onSubmitRecovery(e: FormEvent<HTMLFormElement>) {
         e.preventDefault();
@@ -190,6 +218,43 @@ export default function App() {
                                 )}
                             </DrawerContent>
                         </Drawer>
+                        {showNewPasswordForm && (
+                          <Form
+                            className="w-full mt-6"
+                            onSubmit={handleNewPasswordSubmit}
+                            validationBehavior="native"
+                          >
+                            <MessagesHandler messageType={saveResultType} messageContent={saveMessage} />
+                            <p className="text-sm text-gray-500 dark:text-gray-300 mb-4">
+                              Debes establecer una nueva contraseña para continuar.
+                            </p>
+                            <Input
+                              isRequired
+                              label="Nueva contraseña"
+                              labelPlacement="outside"
+                              name="new-password"
+                              placeholder="Escribe tu nueva contraseña"
+                              value={newPassword}
+                              onChange={(e) => setNewPassword(e.target.value)}
+                              type={isVisible ? "text" : "password"}
+                              endContent={
+                                <button
+                                  aria-label="toggle password visibility"
+                                  className="focus:outline-none"
+                                  type="button"
+                                  onClick={toggleVisibility}
+                                >
+                                  {isVisible ? <IoEye /> : <IoEyeOff />}
+                                </button>
+                              }
+                            />
+                            <div className="mt-4">
+                              <Button type="submit" disabled={loading}>
+                                Cambiar contraseña
+                              </Button>
+                            </div>
+                          </Form>
+                        )}
                         <Grid
                             as="form"
                             className="w-full"
@@ -213,7 +278,5 @@ export default function App() {
                 </div>
             </div>
         </div>
-
-
     )
 }
