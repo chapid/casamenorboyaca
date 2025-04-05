@@ -30,24 +30,33 @@ function Page() {
   const [userGroup, setUserGroup] = useState<string>();
 
   useEffect(() => {
-    fetchAuthSession().then((session) => {
-      if (session.tokens) {
-        console.log("user belongs to following groups: " + session.tokens.accessToken.payload["cognito:groups"]);
-        const groups = session.tokens.accessToken.payload["cognito:groups"] as string[];
-        console.log("user belongs to following groups: ", groups);
-        if (groups?.includes("ADMINS")) {
-          setUserGroup("ADMINS");
-        } else if (groups?.includes("EDITORS")) {
-          setUserGroup("EDITORS");
+    const getSession = async () => {
+      try {
+        const session = await fetchAuthSession();
+        const tokens = session.tokens;
+  
+        if (tokens) {
+          const groups = tokens.accessToken.payload["cognito:groups"] as string[];
+          console.log("Grupos del usuario:", groups);
+  
+          if (groups?.includes("ADMINS")) {
+            setUserGroup("ADMINS");
+          } else if (groups?.includes("EDITORS")) {
+            setUserGroup("EDITORS");
+          } else {
+            setUserGroup("NONE");
+          }
         } else {
-          setUserGroup("NONE");
+          console.log("No tokens found in session");
         }
-      } else {
-        console.log("No tokens found in session");
+      } catch (error) {
+        console.error("Error al obtener la sesión:", error);
       }
-    });
+    };
+  
+    getSession();
   }, []);
-
+  
   return (
     <>
     {authStatus === 'configuring' && <Loading show={authStatus === 'configuring'} />}
