@@ -32,10 +32,17 @@ function Page() {
   useEffect(() => {
     const getSession = async () => {
       try {
+        console.log("Estado de autenticación actual:", authStatus);
+  
         const session = await fetchAuthSession();
+        console.log("Sesión completa:", session);
+  
         const tokens = session.tokens;
   
         if (tokens) {
+          console.log("Access Token:", tokens.accessToken);
+          console.log("Payload del accessToken:", tokens.accessToken.payload);
+  
           const groups = tokens.accessToken.payload["cognito:groups"] as string[];
           console.log("Grupos del usuario:", groups);
   
@@ -54,9 +61,13 @@ function Page() {
       }
     };
   
-    getSession();
-  }, []);
-  
+    if (authStatus === 'authenticated') {
+      getSession();
+    } else {
+      console.log("Esperando a que el usuario esté autenticado...");
+    }
+  }, [authStatus]);
+
   return (
     <>
     {authStatus === 'configuring' && <Loading show={authStatus === 'configuring'} />}
