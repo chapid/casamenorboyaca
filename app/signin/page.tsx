@@ -37,7 +37,6 @@ export default function App() {
     const [code, setCode] = useState("");
     const [isVisible, setIsVisible] = useState(false);
     const toggleVisibility = () => setIsVisible(!isVisible);
-    const [signInSession, setSignInSession] = useState<any>(null);
     const [challenge, setChallenge] = useState("");
     const [showNewPasswordForm, setShowNewPasswordForm] = useState(false);
     const [newPassword, setNewPassword] = useState("");
@@ -56,7 +55,6 @@ export default function App() {
         if (response.nextStep.signInStep === "CONFIRM_SIGN_IN_WITH_NEW_PASSWORD_REQUIRED") {
           console.log("⚠ Requiere nueva contraseña");
     
-          setSignInSession(response.session); // Guarda la sesión
           setShowNewPasswordForm(true);       // Muestra el formulario
           setSaveResultType("info");
           setSaveMessage("Debes cambiar tu contraseña para continuar.");
@@ -81,9 +79,6 @@ export default function App() {
       try {
         await confirmSignIn({
           challengeResponse: newPassword,
-          options: {
-            signInSession,
-          },
         });
         console.log("✅ Contraseña cambiada, login exitoso");
         window.location.href = "/gestion";
