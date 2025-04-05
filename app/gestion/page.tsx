@@ -33,7 +33,15 @@ function Page() {
     fetchAuthSession().then((session) => {
       if (session.tokens) {
         console.log("user belongs to following groups: " + session.tokens.accessToken.payload["cognito:groups"]);
-        setUserGroup(session.tokens.accessToken.payload["cognito:groups"] as string);
+        const groups = session.tokens.accessToken.payload["cognito:groups"] as string[];
+        console.log("user belongs to following groups: ", groups);
+        if (groups?.includes("ADMINS")) {
+          setUserGroup("ADMINS");
+        } else if (groups?.includes("EDITORS")) {
+          setUserGroup("EDITORS");
+        } else {
+          setUserGroup("NONE");
+        }
       } else {
         console.log("No tokens found in session");
       }
