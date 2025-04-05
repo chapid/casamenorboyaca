@@ -53,7 +53,7 @@ export default function App() {
     
         const response = await signIn({ username, password });
     
-        if (response.nextStep.signInStep === "CONFIRM_SIGN_IN_WITH_NEW_PASSWORD") {
+        if (response.nextStep.signInStep === "CONFIRM_SIGN_IN_WITH_NEW_PASSWORD_REQUIRED") {
           console.log("⚠ Requiere nueva contraseña");
     
           setSignInSession(response.session); // Guarda la sesión
