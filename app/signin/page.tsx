@@ -37,26 +37,35 @@ export default function App() {
     const [code, setCode] = useState("");
     const [isVisible, setIsVisible] = useState(false);
     const toggleVisibility = () => setIsVisible(!isVisible);
+    const [signInSession, setSignInSession] = useState(null);
+    const [challenge, setChallenge] = useState("");
+    
     async function handleSubmit(event: FormEvent<SignInForm>) {
-        event.preventDefault()
-        setLoading(true)
-        const form = event.currentTarget
-        // ... validate inputs
-        await signIn({
-            username: form.elements.email.value,
-            password: form.elements.password.value,
-        }).then(() => {
-            setSaveResultType("success");
-            setSaveMessage("Acceso exitoso redirigiendo...");
-            setLoading(false);
-            //Redirect to the /gestion page
-            window.location.href = "/gestion";
-        }).catch((error) => {
-            setLoading(false);
-            setSaveResultType("error");
-            console.error(error);
-            setSaveMessage("Error al iniciar sesión");
-        })
+      event.preventDefault();
+      setLoading(true);
+    
+      try {
+        const form = event.currentTarget;
+        const { isSignedIn, nextStep, session } = await signIn({
+          username: form.elements.email.value,
+          password: form.elements.password.value,
+        });
+    
+        if (nextStep.signInStep === "DONE") {
+          // Login exitoso
+          window.location.href = "/gestion";
+        } else if (nextStep.signInStep === "CONFIRM_SIGN_IN_WITH_NEW_PASSWORD") {
+          // Requiere nueva contraseña
+          setSignInSession(session); // Guarda la sesión para usarla luego
+          setChallenge("NEW_PASSWORD_REQUIRED");
+        }
+      } catch (error) {
+        console.error("Error al iniciar sesión:", error);
+        setSaveResultType("error");
+        setSaveMessage("Error al iniciar sesión");
+      } finally {
+        setLoading(false);
+      }
     }
 
     async function onSubmitRecovery(e: FormEvent<HTMLFormElement>) {
