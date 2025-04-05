@@ -52,11 +52,11 @@ export default function App() {
         const password = form.elements.password.value;
     
         const response = await signIn({ username, password });
-    
+        console.log("Sign-in response:", response);
         if (response.nextStep.signInStep === "CONFIRM_SIGN_IN_WITH_NEW_PASSWORD_REQUIRED") {
           console.log("⚠ Requiere nueva contraseña");
     
-          setSignInSession(response.session); // Guarda la sesión
+          setSignInSession(response); // Guarda la sesión
           setShowNewPasswordForm(true);       // Muestra el formulario
           setSaveResultType("info");
           setSaveMessage("Debes cambiar tu contraseña para continuar.");
